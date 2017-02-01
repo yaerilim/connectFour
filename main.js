@@ -20,13 +20,13 @@ function game_constructor() {
         // [,,,,,],
         // [,,,,,]
 
-        ['', '', '', '', '', ''], // column 0
-        ['R', '', '', '', '', ''], // column 1
-        ['B', '', '', '', '', ''], // column 2
-        ['R', 'R', '', 'R', '', ''], // column 3
-        ['B', '', '', 'R', '', ''], // column 4
-        ['B', 'B', '', 'R', '', ''], // column 5
-        ['B', 'R', 'B', 'R', '', '']  // column 6
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 2
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 3
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 4
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 5
+        ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
 
     ];
 
@@ -71,10 +71,22 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
 };
 
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
-    console.log(clickedSlot);
-    clickedSlot.slot_div.toggleClass('selected_slot_p1');
+    if (this.player1 === true) {
+        var current_column = this.game_array[clickedSlot.column];
+        console.log('Player 1 has clicked', clickedSlot);
+        this.player1 = false;
+        /*var current_slot = this.game_array[clickedSlot.column][clickedSlot.row] = 'R';*/
+        var down_to_bottom = current_column.indexOf("a");
+        clickedSlot.slot_div.toggleClass('selected_slot_p1');
 
+    } else {
+        console.log('Player 2 has clicked: ', clickedSlot);
+        clickedSlot.slot_div.toggleClass('selected_slot_p2');
+        this.player1 = true;
+        this.game_array[clickedSlot.column][clickedSlot.row] = 'B';
+    }
 };
+
 
 game_constructor.prototype.check_win_condition = function () {
 
