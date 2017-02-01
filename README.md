@@ -10,6 +10,7 @@
       - horizontal
       - vertical
       - diagonal
+  - Mystery Requirement - TBA ***soooooooon***
 
 ### Judging criteria
 - Intiutiveness / Ease of Use
@@ -29,26 +30,26 @@
 - Derrick
 - Yaeri
 - John
-- Mentor:
+- Mentor: Vernon
 
 ## Team 2
 - Charles
 - Tim
 - Andy
-- Mentor:
+- Mentor: Shawn G
 
 ## Team 3
 - Dan
 - Michael
 - Mark
-- Mentor:
+- Mentor: Sloan
 
 ## Team 4
 - Jorge
 - Darin
 - Kenneth
 - Gwen
-- Mentor:
+- Mentor: Tammy
 
 ### Requirement for submission
 - Live copy link to gh-pages: 
