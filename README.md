@@ -22,24 +22,9 @@
 - Project lead fork this repo
 - Add other team members as participants on your repo (click on the + in the top right corner, then "add collaborators".  Team members must accept the collaboration email.
 - Other team members clone the repo from the project lead's fork
-"Derrick"
-"Yaeri"
-"John"
-"==============="
-"Dan"
-"Michael"
-"Mark"
-"==============="
-"Charles"
-"Tim"
-"Andy"
-"==============="
-"Jorge"
-"Darin"
-"Kenneth"
-"==============="
-"Gwen"
+
 ### Teams
+
 ## Team 1
 - Derrick
 - Yaeri
