@@ -82,7 +82,10 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
 
 game_constructor.prototype.check_win_condition = function () {
 
-}
+};
 
+
+
+// john was here
 
 
