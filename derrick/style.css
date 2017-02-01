@@ -1,0 +1,33 @@
+body {
+    font-size: 0;
+}
+.slot_container {
+    border: 1px solid black;
+    height: 90vh;
+    width: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    margin: auto;
+}
+
+.slot {
+    border: 1px solid black;
+    width: 14%;
+    padding-bottom: 2%;
+    box-sizing: border-box;
+    flex-grow: 1;
+    font-size: 1rem;
+}
+
+.slot:hover {
+    #background-color: beige;
+}
+
+.selected_slot_p1 {
+    background-color: red;
+}
+
+.selected_slot_p2 {
+    background-color: blue;
+}
