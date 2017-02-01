@@ -3,6 +3,7 @@
 ### MVP Scope
 - Create a connect game with the following
   - A play area with at least 5 tall x 6 wide play board.  Standard board size is 6 tall by 7 wide
+  - At least 2 players
   - the ability to select a top-level segment of a column to drop a coin into that slot
   - the coin drops to the bottom-most unoccupied slot of a a column 
   - if X coins are contiguous in a line, then the owner of that coin wins.
