@@ -1,14 +1,19 @@
 body {
     font-size: 0;
+    background-image: url("img/background.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    width: 50%;
 }
+
 .slot_container {
-    border: 1px solid black;
     height: 90vh;
     width: 100vh;
     display: flex;
     flex-wrap: wrap;
     position: relative;
     margin: auto;
+    justify-content: center;
 }
 
 .slot {
@@ -32,4 +37,19 @@ body {
     background-color: blue;
 }
 
-/*john*/
+.logo{
+    width: 35%;
+    margin: 2% 3%;
+}
+
+.logo2{
+    width: 35%;
+    margin: 0 3% 7% 3%;
+}
+
+.sandp{
+    width: 60%;
+    float: left;
+}
+
+
