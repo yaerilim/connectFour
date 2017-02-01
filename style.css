@@ -1,0 +1,69 @@
+body {
+    font-size: 0;
+    background-image: url("img/background.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    height: 90vh;
+    width: 100vw;
+}
+.logo_container {
+    margin: 2%;
+    float: left;
+    height: 35%;
+    width: 25%;
+}
+.logo{
+    width: 80%;
+    margin-bottom: 3%;
+}
+.logo2{
+    width: 90%;
+    margin-bottom: 10%;
+}
+.sandp{
+    width: 120%;
+    margin-left: -10%;
+}
+.slot_container {
+    margin: 15% 2% 0 2%;
+    float: left;
+    height: 35%;
+    width: 35%;
+    display: inline-block;
+}
+.slot {
+    background-image: url("img/circle_shadow.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    width: 14%;
+    height: 4.9vw;
+    display: inline-block;
+}
+.score_container {
+    margin: 15% 2% 0 2%;
+    float: left;
+    height: 25%;
+    width: 18%;
+    position: relative;
+}
+.bamboo{
+    width: 100%;
+    position: relative;
+}
+.new_game{
+    width: 70%;
+    position: absolute;
+    left: 15%;
+    top: 140%;
+}
+.slot:hover {
+    #background-color: beige;
+}
+
+.selected_slot_p1 {
+    background-color: red;
+}
+
+.selected_slot_p2 {
+    background-color: blue;
+}
