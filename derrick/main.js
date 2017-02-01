@@ -84,7 +84,5 @@ game_constructor.prototype.check_win_condition = function () {
 
 }
 
-//yaeri test
-
 
 
