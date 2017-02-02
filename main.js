@@ -4,7 +4,6 @@ var connect4;
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
-    connect4.search_surrounding_slots(6, 3);
 });
 
 function audio_controls() {
@@ -142,6 +141,20 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
         }
     }
 };
+}
+
+    game_constructor.prototype.log_match_found = function (array_found, index_found) {
+        console.log('matches found: ' + this.counter);
+        console.log('found at array: ' + array_found + ', index: ' + index_found)
+    };
+
+
+//TODO check matching logic when coin dropped in between two matching coins
+//TODO fix split win bug
+
+
+
+
 
 game_constructor.prototype.log_match_found = function (array_found, index_found) {
     console.log('matches found: ' + this.counter);
