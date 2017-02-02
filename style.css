@@ -64,19 +64,16 @@ body {
     left: 15%;
     top: 140%;
 }
-
 .selected_slot_p1 {
     background-image: url("img/spongebob_chip.png");
     background-repeat: no-repeat;
     background-size: 100%;
 }
-
 .selected_slot_p2 {
     background-image: url("img/patrick_chip.png");
     background-repeat: no-repeat;
     background-size: 100%;
 }
-
 .player1_score {
     height: 10vh;
     width: 10vw;
@@ -85,7 +82,6 @@ body {
     top: 6vh;
     left: 10vw;
 }
-
 .player2_score {
     height: 10vh;
     width: 10vw;
@@ -94,15 +90,31 @@ body {
     left: 10vw;
     top: 17vh;
 }
-
 .spongebob_gray, .spongebob{
     position: absolute;
     left: 3vw;
     top: 7vh;
 }
-
 .patrick_gray, .patrick {
     position: absolute;
     top: 18vh;
     left: 3vw;
+}
+.you_won{
+    margin: 20% 0;
+    width: 100%;
+    position: relative;
+}
+.spongebob_won{
+    width: 100%;
+    position: relative;
+    border: dotted 5px white;
+    border-radius: 12px;
+}
+.patrick_won{
+    width: 80%;
+    margin: 0 11%;
+    position: relative;
+    border: dotted 5px white;
+    border-radius: 12px;
 }
