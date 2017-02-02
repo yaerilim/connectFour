@@ -4,13 +4,20 @@ var connect4;
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
-    connect4.search_surrounding_slots(6, 3);
 });
 
 function game_constructor() {
-    this.turn = 'player 1';
+    this.player1 = true;
     this.counter = 0;
-    this.matches_found = {};
+    this.div_array = [
+        [,,,,,],
+        [,,,,,],
+        [,,,,,],
+        [,,,,,],
+        [,,,,,],
+        [,,,,,],
+        [,,,,,]
+    ];
     this.game_array = [
         // [,,,,,],
         // [,,,,,],
@@ -42,7 +49,7 @@ game_constructor.prototype.create_divs = function() {
         for (var column=0; column < 7; column++) {
             var new_slot = new this.slot_constructor(this, column, row );
             new_slot.create_div();
-            //this.game_array[column][row] = new_slot;
+            this.div_array[column][row] = new_slot;
         }
     }
 };
@@ -63,11 +70,10 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
     };
     this.handle_click = function() {
         if (!this.selected) {
-            this.selected = true;
+
             this.parent.handle_slot_click(this);
         }
     };
-
 };
 
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
@@ -77,26 +83,26 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         this.player1 = false;
         /*var current_slot = this.game_array[clickedSlot.column][clickedSlot.row] = 'R';*/
         var down_to_bottom = current_column.indexOf("a");
-        clickedSlot.slot_div.toggleClass('selected_slot_p1');
-
+        current_column[down_to_bottom] = 'R';
+        this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1');
     } else {
-        console.log('Player 2 has clicked: ', clickedSlot);
-        clickedSlot.slot_div.toggleClass('selected_slot_p2');
+        var current_column = this.game_array[clickedSlot.column];
+        console.log('Player 2 has clicked', clickedSlot);
         this.player1 = true;
-        this.game_array[clickedSlot.column][clickedSlot.row] = 'B';
+        /*var current_slot = this.game_array[clickedSlot.column][clickedSlot.row] = 'R';*/
+        var down_to_bottom = current_column.indexOf("a");
+        current_column[down_to_bottom] = 'B';
+        this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p2');
     }
+    connect4.search_surrounding_slots(current_column, down_to_bottom);
 };
 
-
-game_constructor.prototype.check_win_condition = function () {
-
-};
 
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
     this.counter = 0;
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
-            if (!(j == 0 && i == 0) && array + i > 0 && array + i < 6 && index + j > 0 && index + j < 5) {
+            if (!(j == 0 && i == 0) && array + i > 0 && array + i < 7 && index + j > 0 && index + j < 6) {
                 var move_array_position = i;
                 var move_index_position = j;
                 console.log('checking at: ' + (array+i) + ', ' + (index+j));
@@ -107,17 +113,16 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     move_index_position = move_index_position + j;
                     if (this.counter === 3) {
                         console.log('you win!')
-                    }
+                    if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
+                        < 0 || index + move_index_position > 5) {break};
 
+                    }
                 }
             }
         }
     }
 };
 
-game_constructor.prototype.log_match_found = function(array_found, index_found) {
-    console.log('matches found: ' + this.counter);
-    console.log('found at array: ' + array_found + ', index: ' + index_found)
-};
+//TODO check matching logic when coin dropped in between two matching coins
 
 
