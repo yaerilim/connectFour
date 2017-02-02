@@ -1,16 +1,12 @@
-
 var connect4;
-
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
 });
-
 function audio_controls() {
     $('.material-icons').toggleClass('muted');
     $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
 }
-
 function game_constructor() {
     this.player1 = true; // variable used to detect player turn
     this.counter = 0; // variable used to count matches in a row
@@ -18,7 +14,6 @@ function game_constructor() {
     this.player1_score = 0;
     this.player2_score = 0;
     $('.spongebob').hide();
-
     this.div_array = [
         [,,,,,],
         [,,,,,],
@@ -28,7 +23,6 @@ function game_constructor() {
         [,,,,,],
         [,,,,,]
     ];
-
     this.game_array = [ // used to keep track of selected slots on game board. also used as an index for the div_array
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
@@ -39,7 +33,6 @@ function game_constructor() {
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
 }
-
 game_constructor.prototype.init = function() {
     this.create_divs(this);
     $('.new_game').click(function() {
@@ -48,7 +41,6 @@ game_constructor.prototype.init = function() {
     });
     $('.material-icons').click(audio_controls);
 };
-
 // create slot objects and corresponding divs
 game_constructor.prototype.create_divs = function() {
     for (var row=6; row > -1 ; row--) {
@@ -60,7 +52,6 @@ game_constructor.prototype.create_divs = function() {
         }
     }
 };
-
 // definition for slot object
 game_constructor.prototype.slot_constructor = function(parent, column, row) {
     this.parent = parent;
@@ -85,11 +76,10 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
         }
     }
 };
-
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     if (this.player1 === true) {
         $('.top').hover(function(){
-            $(this).css("background-image", "url('img/patrick_ready.png')", "background-repeat", "no-repeat", "background-size", "100%")
+            $(this).css({"background-image": "url('img/patrick_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
         },function(){
             $(this).css("background", "none");
         });
@@ -103,7 +93,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
     } else {
         $('.top').hover(function(){
-            $(this).css("background-image", "url('img/spongebob_ready.png')", "background-repeat", "no-repeat", "background-size", "100%")
+            $(this).css({"background-image": "url('img/spongebob_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
         },function(){
             $(this).css("background", "none");
         });
@@ -131,8 +121,6 @@ game_constructor.prototype.reset_board = function(){
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
 };
-
-
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
@@ -148,33 +136,33 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     move_index_position = move_index_position + j;
                     if (this.counter === 3) {
                         console.log('you win!');
+                        who_wins();
                         break;
                     }
                     if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
                         < 0 || index + move_index_position > 5) {
                         break
                     }
+                    function who_wins() {
+                        if(connect4.player1 === false){
+                            console.log('spongebob won!');
+                            $('.slot').hide();
+                            $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
+                        }else{
+                            $('.slot').hide();
+                            console.log('patrick won!');
+                            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
+                        }
+                    }
                 }
             }
         }
     }
 };
-
-}
-
-
-
 //TODO check matching logic when coin dropped in between two matching coins
 //TODO fix split win bug
-
-
-
-
-
 game_constructor.prototype.log_match_found = function (array_found, index_found) {
     console.log('matches found: ' + this.counter);
     console.log('found at array: ' + array_found + ', index: ' + index_found)
 };
-
-
 //TODO check matching logic when coin dropped in between two matching coins
