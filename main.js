@@ -17,14 +17,10 @@ function new_game(){
 }
 
 function game_constructor() {
-    this.player1 = true;
-    this.counter = 0;
 
-    this.matches_found = {};
-    this.player1 = true;
-    this.player2 = false;
-
-    this.div_array = [
+    this.player1 = true; // variable used to detect player turn
+    this.counter = 0; // variable used to count matches in a row
+    this.div_array = [ // used to store objects which will be used to target the appropriate divs
         [,,,,,],
         [,,,,,],
         [,,,,,],
@@ -34,7 +30,7 @@ function game_constructor() {
         [,,,,,]
     ];
 
-    this.game_array = [
+    this.game_array = [ // used to keep track of selected slots on game board. also used as an index for the div_array
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 2
@@ -53,16 +49,19 @@ game_constructor.prototype.init = function() {
     });
 };
 
+// create slot objects and corresponding divs
 game_constructor.prototype.create_divs = function() {
     for (var row=6; row > -1 ; row--) {
         for (var column=0; column < 7; column++) {
             var new_slot = new this.slot_constructor(this, column, row );
             new_slot.create_div();
+            new_slot.add_class();
             this.div_array[column][row] = new_slot;
         }
     }
 };
 
+// definition for slot object
 game_constructor.prototype.slot_constructor = function(parent, column, row) {
     this.parent = parent;
     this.column = column;
@@ -78,11 +77,13 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
         this.slot_div.click(this.handle_click.bind(this));
     };
     this.handle_click = function() {
-        if (!this.selected) {
-
-            this.parent.handle_slot_click(this);
-        }
+        this.parent.handle_slot_click(this);
     };
+    this.add_class = function() {
+        if (this.row == 6) {
+            $(this.slot_div).addClass('top')
+        }
+    }
 };
 
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
@@ -90,13 +91,9 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
-        var down_to_bottom = current_column.indexOf("a");
-        current_column[down_to_bottom] = 'R';
-
-
-
-        this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1');
-
+        var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
+        current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
+        this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
     } else {
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 2 has clicked', clickedSlot);
@@ -124,12 +121,12 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     move_index_position = move_index_position + j;
                     if (this.counter === 3) {
                         console.log('you win!');
-                        if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
-                            < 0 || index + move_index_position > 5) {
-                            break
-                        }
-
+                        break;
                     }
+                    if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
+                        < 0 || index + move_index_position > 5) {
+                        break
+                    };
                 }
             }
         }
