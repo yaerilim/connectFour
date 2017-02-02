@@ -4,7 +4,6 @@ var connect4;
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
-    connect4.search_surrounding_slots(6, 3);
 });
 
 function audio_controls() {
@@ -140,6 +139,8 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
 
 
 //TODO check matching logic when coin dropped in between two matching coins
+//TODO fix split win bug
+
 
 
 
