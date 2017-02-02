@@ -7,6 +7,11 @@ $(document).ready(function() {
     connect4.search_surrounding_slots(6, 3);
 });
 
+function audio_controls() {
+    $('.material-icons').toggleClass('muted');
+    $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
+};
+
 function new_game(){
     console.log('new game hit');
 }
@@ -30,14 +35,6 @@ function game_constructor() {
     ];
 
     this.game_array = [
-        // [,,,,,],
-        // [,,,,,],
-        // [,,,,,],
-        // [,,,,,],
-        // [,,,,,],
-        // [,,,,,],
-        // [,,,,,]
-
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 2
@@ -45,9 +42,7 @@ function game_constructor() {
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 4
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 5
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
-
     ];
-
 }
 
 game_constructor.prototype.init = function() {
@@ -95,7 +90,6 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
-        /*var current_slot = this.game_array[clickedSlot.column][clickedSlot.row] = 'R';*/
         var down_to_bottom = current_column.indexOf("a");
         current_column[down_to_bottom] = 'R';
 
@@ -107,52 +101,49 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 2 has clicked', clickedSlot);
         this.player1 = true;
-        /*var current_slot = this.game_array[clickedSlot.column][clickedSlot.row] = 'R';*/
         var down_to_bottom = current_column.indexOf("a");
         current_column[down_to_bottom] = 'B';
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p2');
     }
-    connect4.search_surrounding_slots(current_column, down_to_bottom);
+    this.search_surrounding_slots(clickedSlot.column, down_to_bottom);
 };
 
 
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
-    this.counter = 0;
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
-            if (!(j == 0 && i == 0) && array + i > 0 && array + i < 7 && index + j > 0 && index + j < 6) {
+            if (!(j == 0 && i == 0) && array + i > -1 && array + i < 7 && index + j > -1 && index + j < 6) {
                 var move_array_position = i;
                 var move_index_position = j;
-                console.log('checking at: ' + (array+i) + ', ' + (index+j));
-                while(this.game_array[array+move_array_position][index+move_index_position] === this.game_array[array][index]) {
+                console.log('checking at: ' + (array + i) + ', ' + (index + j));
+                this.counter = 0;
+                while (this.game_array[array + move_array_position][index + move_index_position] === this.game_array[array][index]) {
                     this.counter++;
                     console.log('match found at: ' + (array + move_array_position) + ', ' + (index + move_index_position));
                     move_array_position = move_array_position + i;
                     move_index_position = move_index_position + j;
                     if (this.counter === 3) {
                         console.log('you win!');
-                    if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
-                        < 0 || index + move_index_position > 5) {break};
+                        if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
+                            < 0 || index + move_index_position > 5) {
+                            break
+                        }
 
                     }
                 }
             }
         }
     }
-};
+}
 
-game_constructor.prototype.log_match_found = function(array_found, index_found) {
-    console.log('matches found: ' + this.counter);
-    console.log('found at array: ' + array_found + ', index: ' + index_found)
-};
+    game_constructor.prototype.log_match_found = function (array_found, index_found) {
+        console.log('matches found: ' + this.counter);
+        console.log('found at array: ' + array_found + ', index: ' + index_found)
+    };
+
 
 //TODO check matching logic when coin dropped in between two matching coins
 
-
-function audio_controls() {
-    $('.material-icons').toggleClass('muted');
-    $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
-}
 
 
 
