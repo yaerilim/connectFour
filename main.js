@@ -5,12 +5,19 @@ $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
     connect4.search_surrounding_slots(6, 3);
+
 });
+
+function new_game(){
+    console.log('new game hit');
+}
 
 function game_constructor() {
     this.turn = 'player 1';
     this.counter = 0;
     this.matches_found = {};
+    this.player1 = true;
+    this.player2 = false;
     this.game_array = [
         // [,,,,,],
         // [,,,,,],
@@ -34,8 +41,10 @@ function game_constructor() {
 
 game_constructor.prototype.init = function() {
     this.create_divs(this);
+    $('.new_game').click(function(){
+        console.log('new game button clicked');
+    });
 };
-
 
 game_constructor.prototype.create_divs = function() {
     for (var row=6; row > -1 ; row--) {
@@ -77,6 +86,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         this.player1 = false;
         /*var current_slot = this.game_array[clickedSlot.column][clickedSlot.row] = 'R';*/
         var down_to_bottom = current_column.indexOf("a");
+        current_column[down_to_bottom] = 'R';
         clickedSlot.slot_div.toggleClass('selected_slot_p1');
 
     } else {
@@ -96,7 +106,7 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
     this.counter = 0;
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
-            if (!(j == 0 && i == 0) && array + i > 0 && array + i < 6 && index + j > 0 && index + j < 5) {
+            if (!(j == 0 && i == 0) && array + i > 0 && array + i < 7 && index + j > 0 && index + j < 6) {
                 var move_array_position = i;
                 var move_index_position = j;
                 console.log('checking at: ' + (array+i) + ', ' + (index+j));
