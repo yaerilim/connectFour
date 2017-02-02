@@ -39,10 +39,10 @@ body {
     height: 5.5vw;
     display: inline-block;
 }
-.slot:nth-child(1), .slot:nth-child(2), .slot:nth-child(3), .slot:nth-child(4), .slot:nth-child(5), .slot:nth-child(6), .slot:nth-child(7) {
+.top {
     background: none;
 }
-.slot:nth-child(1):hover, .slot:nth-child(2):hover, .slot:nth-child(3):hover, .slot:nth-child(4):hover, .slot:nth-child(5):hover, .slot:nth-child(6):hover, .slot:nth-child(7):hover {
+.top:hover {
     background-image: url("img/spongebob_ready.png");
     background-repeat: no-repeat;
     background-size: 100%;
