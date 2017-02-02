@@ -14,6 +14,8 @@ function game_constructor() {
     this.player1_score = 0;
     this.player2_score = 0;
     $('.spongebob').hide();
+    this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0;
+    this.direction_tracker = 0;
     this.div_array = [
         [,,,,,],
         [,,,,,],
@@ -124,23 +126,36 @@ game_constructor.prototype.reset_board = function(){
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
+
+            // checks happen from the bottom of a column to the top, then moves and checks the next column in the same fashion.
+            // each direction is given a value of 1-9 and adds to the appropriate counter based on the switch statement below.
+            this.direction_tracker++;
+
+            // this if statement checks to make sure we're not out of bounds or counting the newly placed token itself
             if (!(j == 0 && i == 0) && array + i > -1 && array + i < 7 && index + j > -1 && index + j < 6) {
                 var move_array_position = i;
                 var move_index_position = j;
                 console.log('checking at: ' + (array + i) + ', ' + (index + j));
-                this.counter = 0;
+
+                // this while statement allows the check to continue along the same path
+                // for example, if its checking the slot to the top right and finds a match,
+                // it will continue checking in that direction and add onto the appropriate counter.
                 while (this.game_array[array + move_array_position][index + move_index_position] === this.game_array[array][index]) {
-                    this.counter++;
+                    this.increase_counters(this.direction_tracker);
+
                     console.log('match found at: ' + (array + move_array_position) + ', ' + (index + move_index_position));
-                    move_array_position = move_array_position + i;
-                    move_index_position = move_index_position + j;
-                    if (this.counter === 3) {
+
+                    // checks to see if any of the counters have reached a winning value
+                    if (this.diag1_counter === 3 || this.diag2_counter === 3 || this.horz_counter === 3 || this.vert_counter === 3) {
                         console.log('you win!');
                         who_wins();
                         break;
                     }
-                    if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
-                        < 0 || index + move_index_position > 5) {
+
+                    // increases coordinates in same direction and then checks to see if we're out of bounds before continuing another check.
+                    move_array_position = move_array_position + i;
+                    move_index_position = move_index_position + j;
+                    if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position < 0 || index + move_index_position > 5) {
                         break
                     }
                     function who_wins() {
@@ -158,11 +173,34 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
             }
         }
     }
+    this.reset_counters();
 };
-//TODO check matching logic when coin dropped in between two matching coins
-//TODO fix split win bug
-game_constructor.prototype.log_match_found = function (array_found, index_found) {
-    console.log('matches found: ' + this.counter);
-    console.log('found at array: ' + array_found + ', index: ' + index_found)
+game_constructor.prototype.increase_counters = function(direction_tracker) {
+    switch (direction_tracker) {
+        case 1:
+        case 9:
+            this.diag1_counter++;
+            break;
+        case 2:
+        case 8:
+            this.horz_counter++;
+            break;
+        case 3:
+        case 7:
+            this.diag2_counter++;
+            break;
+        case 4:
+        case 6:
+            this.vert_counter++;
+            break;
+    }
+
 };
-//TODO check matching logic when coin dropped in between two matching coins
+
+game_constructor.prototype.reset_counters = function() {
+    this.diag1_counter = 0,
+        this.diag2_counter = 0,
+        this.horz_counter = 0,
+        this.vert_counter = 0,
+        this.direction_tracker = 0;
+};
