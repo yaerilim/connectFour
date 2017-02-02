@@ -52,6 +52,7 @@ function game_constructor() {
 
 game_constructor.prototype.init = function() {
     this.create_divs(this);
+    $('.material-icons').click(audio_controls);
     $('.new_game').click(function(){
         console.log('new game button clicked');
     });
@@ -146,6 +147,14 @@ game_constructor.prototype.log_match_found = function(array_found, index_found) 
 };
 
 //TODO check matching logic when coin dropped in between two matching coins
+
+
+function audio_controls() {
+    $('.material-icons').toggleClass('muted');
+    $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
+}
+
+
 
 
 
