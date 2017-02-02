@@ -11,15 +11,15 @@ function audio_controls() {
     $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
 }
 
-function new_game(){
-    console.log('new game hit');
-}
-
 function game_constructor() {
-
     this.player1 = true; // variable used to detect player turn
     this.counter = 0; // variable used to count matches in a row
-    this.div_array = [ // used to store objects which will be used to target the appropriate divs
+    this.matches_found = {};
+    this.player1_score = 0;
+    this.player2_score = 0;
+    $('.spongebob').hide();
+
+    this.div_array = [
         [,,,,,],
         [,,,,,],
         [,,,,,],
@@ -42,10 +42,11 @@ function game_constructor() {
 
 game_constructor.prototype.init = function() {
     this.create_divs(this);
-    $('.material-icons').click(audio_controls);
-    $('.new_game').click(function(){
+    $('.new_game').click(function() {
         console.log('new game button clicked');
+        connect4.reset_board();
     });
+    $('.material-icons').click(audio_controls);
 };
 
 // create slot objects and corresponding divs
@@ -92,6 +93,8 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         },function(){
             $(this).css("background", "none");
         });
+        $('.spongebob').show();
+        $('.patrick').hide();
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
@@ -104,6 +107,8 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         },function(){
             $(this).css("background", "none");
         });
+        $('.patrick').show();
+        $('.spongebob').hide();
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 2 has clicked', clickedSlot);
         this.player1 = true;
@@ -112,6 +117,19 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p2');
     }
     this.search_surrounding_slots(clickedSlot.column, down_to_bottom);
+};
+game_constructor.prototype.reset_board = function(){
+    $('.slot_container').empty();
+    this.init();
+    this.game_array = [
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 2
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 3
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 4
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 5
+        ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
+    ];
 };
 
 
@@ -141,12 +159,9 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
         }
     }
 };
+
 }
 
-    game_constructor.prototype.log_match_found = function (array_found, index_found) {
-        console.log('matches found: ' + this.counter);
-        console.log('found at array: ' + array_found + ', index: ' + index_found)
-    };
 
 
 //TODO check matching logic when coin dropped in between two matching coins
