@@ -10,7 +10,7 @@ $(document).ready(function() {
 function audio_controls() {
     $('.material-icons').toggleClass('muted');
     $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
-};
+}
 
 function new_game(){
     console.log('new game hit');
@@ -88,6 +88,11 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
 
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     if (this.player1 === true) {
+        $('.top').hover(function(){
+            $(this).css("background-image", "url('img/patrick_ready.png')", "background-repeat", "no-repeat", "background-size", "100%")
+        },function(){
+            $(this).css("background", "none");
+        });
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
@@ -95,6 +100,11 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
     } else {
+        $('.top').hover(function(){
+            $(this).css("background-image", "url('img/spongebob_ready.png')", "background-repeat", "no-repeat", "background-size", "100%")
+        },function(){
+            $(this).css("background", "none");
+        });
         var current_column = this.game_array[clickedSlot.column];
         console.log('Player 2 has clicked', clickedSlot);
         this.player1 = true;
@@ -121,25 +131,22 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     move_index_position = move_index_position + j;
                     if (this.counter === 3) {
                         console.log('you win!');
-                    if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
-                        < 0 || index + move_index_position > 5) {break}
-                        console.log('you win!'); }
                         break;
                     }
                     if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
                         < 0 || index + move_index_position > 5) {
                         break
-                    };
+                    }
                 }
             }
         }
     }
-}
+};
 
-    game_constructor.prototype.log_match_found = function (array_found, index_found) {
-        console.log('matches found: ' + this.counter);
-        console.log('found at array: ' + array_found + ', index: ' + index_found)
-    };
+game_constructor.prototype.log_match_found = function (array_found, index_found) {
+    console.log('matches found: ' + this.counter);
+    console.log('found at array: ' + array_found + ', index: ' + index_found)
+};
 
 
 //TODO check matching logic when coin dropped in between two matching coins
