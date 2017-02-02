@@ -15,9 +15,9 @@ function audio_controls() {
 function game_constructor() {
     this.player1 = true;
     this.counter = 0;
-
     this.matches_found = {};
-    this.player1 = true;
+    this.player1_score = 0;
+    this.player2_score = 0;
     $('.spongebob').hide();
 
     this.div_array = [
