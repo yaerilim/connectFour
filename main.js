@@ -112,9 +112,9 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     move_array_position = move_array_position + i;
                     move_index_position = move_index_position + j;
                     if (this.counter === 3) {
-                        console.log('you win!')
+                        console.log('you win!');
                     if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position
-                        < 0 || index + move_index_position > 5) {break};
+                        < 0 || index + move_index_position > 5) {break}
 
                     }
                 }
@@ -129,6 +129,5 @@ game_constructor.prototype.log_match_found = function(array_found, index_found) 
 };
 
 //TODO check matching logic when coin dropped in between two matching coins
-
 
 
