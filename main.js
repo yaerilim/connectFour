@@ -119,5 +119,3 @@ game_constructor.prototype.log_match_found = function(array_found, index_found) 
     console.log('matches found: ' + this.counter);
     console.log('found at array: ' + array_found + ', index: ' + index_found)
 };
-
-

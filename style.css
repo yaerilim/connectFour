@@ -18,29 +18,32 @@ body {
 }
 .logo2{
     width: 90%;
-    margin-bottom: 10%;
+    margin-bottom: 7%;
 }
 .sandp{
     width: 120%;
     margin-left: -10%;
 }
 .slot_container {
-    margin: 15% 2% 0 2%;
+    margin: 6% 2% 0 2%;
     float: left;
-    height: 35%;
-    width: 35%;
+    height: 40%;
+    width: 40%;
     display: inline-block;
 }
 .slot {
-    background-image: url("img/circle_shadow.png");
+    background-image: url("img/slot.png");
     background-repeat: no-repeat;
     background-size: 100%;
     width: 14%;
-    height: 4.9vw;
+    height: 5.5vw;
     display: inline-block;
 }
+.slot:nth-child(1), .slot:nth-child(2), .slot:nth-child(3), .slot:nth-child(4), .slot:nth-child(5), .slot:nth-child(6), .slot:nth-child(7) {
+    background: none;
+}
 .score_container {
-    margin: 15% 2% 0 2%;
+    margin: 12% 2% 0 2%;
     float: left;
     height: 25%;
     width: 18%;
@@ -56,14 +59,15 @@ body {
     left: 15%;
     top: 140%;
 }
-.slot:hover {
-    #background-color: beige;
+
+.selected_slot_p2 {
+    background-image: url("img/spongebob_chip.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
 
 .selected_slot_p1 {
-    background-color: red;
-}
-
-.selected_slot_p2 {
-    background-color: blue;
+    background-image: url("img/patrick_chip.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
