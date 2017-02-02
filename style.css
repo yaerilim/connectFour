@@ -71,3 +71,33 @@ body {
     background-repeat: no-repeat;
     background-size: 100%;
 }
+
+.player1_score {
+    height: 10vh;
+    width: 10vw;
+    font-size: 10vh;
+    position: absolute;
+    top: 6vh;
+    left: 10vw;
+}
+
+.player2_score {
+    height: 10vh;
+    width: 10vw;
+    font-size: 10vh;
+    position: absolute;
+    left: 10vw;
+    top: 17vh;
+}
+
+.spongebob_gray, .spongebob{
+    position: absolute;
+    left: 3vw;
+    top: 7vh;
+}
+
+.patrick_gray, .patrick {
+    position: absolute;
+    top: 18vh;
+    left: 3vw;
+}
