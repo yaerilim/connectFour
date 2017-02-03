@@ -19,7 +19,7 @@ var connect4 = new game_constructor();
 
 // update_firebase = function(column, multiplayer, player1joined, player2joined, game_over, db_player_turn)
 
-function setupDB() {
+/*function setupDB() {
     setTimeout(function() {
         if (connect4.data_received_from_server.player1joined === true && connect4.data_received_from_server.player2joined === true) {
             console.log('something is wrong...');
@@ -56,7 +56,7 @@ function setupDB() {
             console.log("player 1 may not be in multiplayer");
         }
     }, 5000)
-}
+}*/
 
 
 
@@ -79,38 +79,35 @@ $(document).ready(function() {
     $('.sound_off').click(sound_off);
     $('.sound_on').click(sound_on);
     select_game_mode();
-    setupDB();
 });
 
-function drop(){
+function drop(){ //sound effect for drop noise on slots
     var audio = $("#drop")[0];
     audio.play();
 }
 
-function spongebob_win(){
+function spongebob_win(){  //sound effect for spongebob win
     var audio = $('#spongebob_laugh')[0];
     audio.play();
 }
-function patrick_win(){
+function patrick_win(){ //sound effect for patrick win
     var audio = $('#patrick_laugh')[0];
     audio.play();
 }
 
-function sound_off() {
+function sound_off() { //turn off sound through sound button
     $('.sound_off').hide();
     $('.sound_on').show();
     $('.music')[0].pause();
 }
 
-function sound_on(){
+function sound_on(){ //turn on sound through sound button
     $('.sound_on').hide();
     $('.sound_off').show();
     $('.music')[0].play();
 }
 function game_constructor() {
-    this.winner_found = false;
-    this.player_turn = null;
-    this.you_are = '';
+    this.winner_found = false; // flag for winner
     this.data_received_from_server = {};
     // this.multiplayer = false;
     // this.player2joined = false;
@@ -118,15 +115,15 @@ function game_constructor() {
     this.player1 = true; // variable used to detect player turn
     this.player1_score = 0;
     this.player2_score = 0;
-    $('.patrick').hide();
-    this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0;
-    this.direction_tracker = 0;
+    $('.patrick').hide(); //hide patrick token @ beginning of game
+    this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0; //used to count up matches in a row
+    this.direction_tracker = 0; //detects which direction we are counting
 
     this.div_array = [
         [,,,,,],
         [,,,,,],
-        [,,,,,],
-        [,,,,,],
+        [,,,,,],      // used to update game board
+        [,,,,,],      // with correct tokens
         [,,,,,],
         [,,,,,],
         [,,,,,]
@@ -142,7 +139,7 @@ function game_constructor() {
     ];
 }
 
-function select_game_mode() {
+function select_game_mode() { //opening screen to select single or multiplayer
     var game_modes_div = $('<div>', {
         class: 'game_modes'
     });
@@ -186,20 +183,16 @@ game_constructor.prototype.waiting_for_player_2 = function() {
 }
 
 
-game_constructor.prototype.init = function() {
+game_constructor.prototype.init = function() { //initiate game
 
-    this.create_divs(this);
+    this.create_divs(this); //create game board
 
     $('.new_game').click(function() {
         console.log('new game button clicked');
         connect4.reset_board();
     });
-    $('.reset_all').click(function(){
-        console.log('reset stats and board');
-        connect4.hard_reset();
-    });
     $('.reset_score').click(function(){
-        console.log('reseting board and scores');
+        console.log('reseting board and scores'); // for actual reset score button
         connect4.hard_reset();
     });
     $(".slot").click(drop);
@@ -234,13 +227,13 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
     this.handle_click = function() {
         this.parent.handle_slot_click(this);
     };
-    this.add_class = function() {
+    this.add_class = function() { //make top
         if (this.row == 6) {
             $(this.slot_div).addClass('top')
         }
     };
-    this.krabby_patty = function(){
-        for(var i = 5; i >= 0; i--) {
+    this.krabby_patty = function(){ //
+        for(var i = 4; i >= 0; i--) {
             if (this.row === Math.floor((Math.random() * 5) + 1) && this.column === Math.floor((Math.random() * 5) + 1)) {
                 $(this.slot_div).addClass('krabby_patty');
             }
@@ -275,9 +268,9 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         },function(){
             $(this).css("background", "none");
         });
-        $('.spongebob').hide();
+        $('.spongebob').hide(); //hide spongebob token
         $('.patrick').show();
-        $('.youare_s').hide();
+        $('.youare_s').hide(); //hide spongebob player indicator
         $('.youare_p').show();
         console.log('Player 1 has clicked', clickedSlot);
         //console.log('Player 1 has clicked', clickedSlot);
@@ -392,13 +385,11 @@ game_constructor.prototype.hard_reset = function() {
 };
 
 game_constructor.prototype.display_stats = function(){
-    //console.log('********* method display_stats called**************');
     $('.player1_score').text(this.player1_score);
     $('.player2_score').text(this.player2_score);
 };
 
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
-    //console.log('********* method search_slots called**************');
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
             if (this.winner_found === true) {return};
@@ -417,8 +408,6 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                 // it will continue checking in that direction and add onto the appropriate counter.
                 while (this.game_array[array + move_array_position][index + move_index_position] === this.game_array[array][index]) {
                     this.increase_counters(this.direction_tracker);
-
-                    //console.log('match found at: ' + (array + move_array_position) + ', ' + (index + move_index_position));
 
                     // checks to see if any of the counters have reached a winning value
                     if (this.diag1_counter === 3 || this.diag2_counter === 3 || this.horz_counter === 3 || this.vert_counter === 3) {
@@ -443,7 +432,6 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
 };
 
 game_constructor.prototype.who_wins = function(){
-    //console.log('********* method who_wins called**************');
     if(this.player1 === false){
         console.log('spongebob won!');
         spongebob_win();
