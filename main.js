@@ -1,7 +1,8 @@
 
 var connect4;
 
-var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
+var connect4Model = new GenericFBModel('spongeBobjohn-connect4',boardUpdated);
+
 setTimeout(function() {
     connect4Model.saveState(emptyObject)
 }, 2000);
@@ -27,9 +28,16 @@ $(document).ready(function() {
     connect4.init();
 });
 
-function audio_controls() {
-    $('.material-icons').toggleClass('muted');
-    $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
+function sound_off() {
+    $('.sound_off').hide();
+    $('.sound_on').show();
+    $('.music')[0].pause();
+}
+
+function sound_on(){
+    $('.sound_on').hide();
+    $('.sound_off').show();
+    $('.music')[0].play();
 }
 function game_constructor() {
     this.remote_column_clicked = null;
@@ -80,7 +88,12 @@ game_constructor.prototype.init = function() {
         console.log('reset stats and board');
         connect4.hard_reset();
     });
-    $('.material-icons').click(audio_controls);
+    $('.reset_score').click(function(){
+        console.log('reseting board and scores');
+        connect4.hard_reset();
+    })
+    $('.sound_off').click(sound_off);
+    $('.sound_on').click(sound_on);
 };
 // create slot objects and corresponding divs
 game_constructor.prototype.create_divs = function() {
@@ -129,8 +142,10 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         },function(){
             $(this).css("background", "none");
         });
-        $('.spongebob').show();
-        $('.patrick').hide();
+        $('.spongebob').hide();
+        $('.patrick').show();
+        $('.youare_s').hide();
+        $('.youare_p').show();
         console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
@@ -143,8 +158,10 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         },function(){
             $(this).css("background", "none");
         });
-        $('.patrick').show();
-        $('.spongebob').hide();
+        $('.patrick').hide();
+        $('.spongebob').show();
+        $('.youare_p').hide();
+        $('.youare_s').show();
         console.log('Player 2 has clicked', clickedSlot);
         this.player1 = true;
         var down_to_bottom = current_column.indexOf("a");
@@ -169,6 +186,8 @@ game_constructor.prototype.reset_board = function(){
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 5
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
+    $('.youare_p').hide();
+    $('.youare_s').show();
 };
 
 game_constructor.prototype.hard_reset = function() {
@@ -189,6 +208,9 @@ game_constructor.prototype.hard_reset = function() {
     this.player1_score = 0;
     this.player2_score = 0;
     this.display_stats();
+    $('.youare_p').hide();
+    $('.youare_s').show();
+
 };
 
 game_constructor.prototype.display_stats = function(){
@@ -246,11 +268,15 @@ game_constructor.prototype.who_wins = function(){
     console.log('********* method who_wins called**************');
         if(this.player1 === false){
             console.log('spongebob won!');
+            $('.youare_p').hide();
+            $('.youare_s').show();
             $('.slot').hide();
             $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
             this.player1_score++;
             this.display_stats();
         }else{
+            $('.youare_p').show();
+            $('.youare_s').hide();
             $('.slot').hide();
             console.log('patrick won!');
             $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
