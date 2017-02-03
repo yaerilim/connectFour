@@ -1,5 +1,5 @@
 var connect4 = new game_constructor();
-var connect4Model = new GenericFBModel('spongeBob-connect4-derrick', boardUpdated);
+var connect4Model = new GenericFBModel('spongeBob-connect4', boardUpdated);
 
 var emptyObject = {
     column: 'empty',
@@ -426,11 +426,3 @@ game_constructor.prototype.reset_counters = function () {
     this.vert_counter = 0;
     this.direction_tracker = 0;
 };
-
-
-
-
-
-
-
-
