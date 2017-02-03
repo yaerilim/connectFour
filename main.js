@@ -28,6 +28,20 @@ $(document).ready(function() {
     connect4.init();
 });
 
+function drop(){
+    var audio = $("#drop")[0];
+    audio.play();
+}
+
+function spongebob_win(){
+    var audio = $('#spongebob_laugh')[0];
+    audio.play();
+}
+function patrick_win(){
+    var audio = $('#patrick_laugh')[0];
+    audio.play();
+}
+
 function sound_off() {
     $('.sound_off').hide();
     $('.sound_on').show();
@@ -91,9 +105,10 @@ game_constructor.prototype.init = function() {
     $('.reset_score').click(function(){
         console.log('reseting board and scores');
         connect4.hard_reset();
-    })
+    });
     $('.sound_off').click(sound_off);
     $('.sound_on').click(sound_on);
+    $(".slot").click(drop);
 };
 // create slot objects and corresponding divs
 game_constructor.prototype.create_divs = function() {
@@ -102,6 +117,7 @@ game_constructor.prototype.create_divs = function() {
             var new_slot = new this.slot_constructor(this, column, row );
             new_slot.create_div();
             new_slot.add_class();
+            new_slot.krabby_patty();
             this.div_array[column][row] = new_slot;
         }
     }
@@ -128,7 +144,14 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
         if (this.row == 6) {
             $(this.slot_div).addClass('top')
         }
-    }
+    };
+    this.krabby_patty = function(){
+        for(var i = 5; i >= 0; i--) {
+            if (this.row === Math.floor((Math.random() * 5) + 1) && this.column === Math.floor((Math.random() * 5) + 1)) {
+                $(this.slot_div).addClass('krabby_patty');
+            }
+        }
+    };
 };
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     var current_column = this.game_array[clickedSlot.column];
@@ -150,7 +173,25 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         this.player1 = false;
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
-        this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
+        // applies class to div using the div_array (array containing objects)
+        this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1');
+        if($(this.div_array[clickedSlot.column][down_to_bottom].slot_div).is('.krabby_patty')){
+            console.log('secret krabby patty clicked!!');
+            this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('krabby_patty_clicked_spongebob');
+            $('.slot').hide();
+            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/krabbypatty.gif'></div>");
+            setTimeout(this.set_timeout, 3000);
+            this.player1 = true;
+            $('.youare_s').show();
+            $('.youare_p').hide();
+            $('.spongebob').show();
+            $('.patrick').hide();
+            $('.top').hover(function(){
+                $(this).css({"background-image": "url('img/spongebob_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
+            },function(){
+                $(this).css("background", "none");
+            });
+        }
 
     } else {
         $('.top').hover(function(){
@@ -167,10 +208,32 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var down_to_bottom = current_column.indexOf("a");
         current_column[down_to_bottom] = 'B';
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p2');
+        if($(this.div_array[clickedSlot.column][down_to_bottom].slot_div).is('.krabby_patty')){
+            console.log('secret krabby patty clicked!!');
+            this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('krabby_patty_clicked_patrick');
+            $('.slot').hide();
+            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/krabbypatty.gif'></div>");
+            setTimeout(this.set_timeout, 3000);
+            this.player1 = false;
+            $('.youare_s').hide();
+            $('.youare_p').show();
+            $('.spongebob').hide();
+            $('.patrick').show();
+            $('.top').hover(function(){
+                $(this).css({"background-image": "url('img/patrick_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
+            },function(){
+                $(this).css("background", "none");
+            });
+        }
     }
 
     this.search_surrounding_slots(clickedSlot.column, down_to_bottom);
 };
+
+game_constructor.prototype.set_timeout = function(){
+    $('.you_won').hide();
+    $('.slot').show();
+}
 game_constructor.prototype.reset_board = function(){
     $('.slot_container').empty();
     this.init();
@@ -268,6 +331,7 @@ game_constructor.prototype.who_wins = function(){
     console.log('********* method who_wins called**************');
         if(this.player1 === false){
             console.log('spongebob won!');
+            spongebob_win();
             $('.youare_p').hide();
             $('.youare_s').show();
             $('.slot').hide();
@@ -279,6 +343,7 @@ game_constructor.prototype.who_wins = function(){
             $('.youare_s').hide();
             $('.slot').hide();
             console.log('patrick won!');
+            patrick_win();
             $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
             this.player2_score++;
             this.display_stats();
