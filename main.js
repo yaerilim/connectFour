@@ -1,64 +1,24 @@
 
-function GenericFBModel(gameName, changeCallbackFunction){
-    this.boardName = gameName;
-    this.db;
-    this.callback = changeCallbackFunction;
-    this.lastSend = null;
-    this.initialize = function(){
-        this.load();
-    };
-    this.load = function(){
-        $.getScript('https://www.gstatic.com/firebasejs/3.6.8/firebase.js',this.start.bind(this));
-    };
-    this.start = function(){
-        var config = {
-            apiKey: "AIzaSyBf6h2GLec6WsULcGgaHy2-uMPEe9L3DGQ",
-            authDomain: "c117connect4.firebaseapp.com",
-            databaseURL: "https://c117connect4.firebaseio.com",
-            storageBucket: "c117connect4.appspot.com",
-            messagingSenderId: "1046895016915"
-        };
-        this.db=firebase;
-        this.db.initializeApp(config);
-        this.registerListener();
-    };
-    this.saveState = function(newState){
-        this.lastSend = JSON.stringify(newState);
-        this.db.database().ref(this.boardName).set(newState);
-    };
-    this.registerListener = function(){
-        this.db.database().ref(this.boardName).on('value',this.handleDataUpdate.bind(this));
-    };
-    this.handleDataUpdate = function(data){
-        var currentData = JSON.stringify(data.val());
-        this.callback.call(null,data.val());
-    };
-    this.initialize();
-
-}
-
-
 var connect4;
+var connect4Model;
+
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
-    connect4Model = new GenericFBModel('abc123xyz', boardUpdated)
+    connect4Model = new GenericFBModel('johnpractice',boardUpdated);
 });
 
-
-function boardUpdated(data){
-    console.log(data);
-};
 
 function audio_controls() {
     $('.material-icons').toggleClass('muted');
     $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
 }
 function game_constructor() {
+    console.log('********* constructor built**************');
     this.player1 = true; // variable used to detect player turn
     this.counter = 0; // variable used to count matches in a row
     this.matches_found = {};
-    this.player1_score = 3;
+    this.player1_score = 0;
     this.player2_score = 0;
     $('.patrick').hide();
     this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0;
@@ -82,8 +42,29 @@ function game_constructor() {
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 5
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
+
+    //*************************************OBJECTS FOR FIREBASE*******************************************************//
+
+    this.firebase_arrays = {
+        'game_array': this.game_array,
+        'div_array': this.div_array
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 game_constructor.prototype.init = function() {
+    console.log('********* method init called**************');
     this.create_divs(this);
     $('.new_game').click(function() {
         console.log('new game button clicked');
@@ -93,6 +74,7 @@ game_constructor.prototype.init = function() {
 };
 // create slot objects and corresponding divs
 game_constructor.prototype.create_divs = function() {
+    console.log('********* method create_divs called**************');
     for (var row=6; row > -1 ; row--) {
         for (var column=0; column < 7; column++) {
             var new_slot = new this.slot_constructor(this, column, row );
@@ -104,6 +86,7 @@ game_constructor.prototype.create_divs = function() {
 };
 // definition for slot object
 game_constructor.prototype.slot_constructor = function(parent, column, row) {
+    console.log('********* method slot_constructor called**************');
     this.parent = parent;
     this.column = column;
     this.row = row;
@@ -127,6 +110,7 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
     }
 };
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
+    console.log('********* method handle_slot_click called**************');
     if (this.player1 === true) {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/patrick_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
@@ -141,6 +125,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
+        connect4Model.saveState(this.firebase_arrays);
     } else {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/spongebob_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
@@ -159,12 +144,12 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     this.search_surrounding_slots(clickedSlot.column, down_to_bottom);
 };
 game_constructor.prototype.reset_board = function(){
+    console.log('********* method reset_board called**************');
     $('.slot_container').empty();
     this.init();
     this.player1 = true;
     $('.spongebob').show();
     $('.patrick').hide();
-    this.display_stats();
     this.game_array = [
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
@@ -177,11 +162,13 @@ game_constructor.prototype.reset_board = function(){
 };
 
 game_constructor.prototype.display_stats = function(){
+    console.log('********* method display_stats called**************');
     $('.player1_score').text(this.player1_score);
     $('.player2_score').text(this.player2_score);
 };
 
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
+    console.log('********* method search_slots called**************');
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
 
@@ -206,7 +193,8 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     // checks to see if any of the counters have reached a winning value
                     if (this.diag1_counter === 3 || this.diag2_counter === 3 || this.horz_counter === 3 || this.vert_counter === 3) {
                         console.log('you win!');
-                        who_wins();
+                        $('.slot_container').attr('disabled', 'true');
+                        this.who_wins();
                         break;
                     }
 
@@ -215,17 +203,7 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     move_index_position = move_index_position + j;
                     if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position < 0 || index + move_index_position > 5) {
                         break
-                    }
-                    function who_wins() {
-                        if(connect4.player1 === false){
-                            console.log('spongebob won!');
-                            $('.slot').hide();
-                            $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
-                        }else{
-                            $('.slot').hide();
-                            console.log('patrick won!');
-                            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
-                        }
+
                     }
                 }
             }
@@ -233,7 +211,26 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
     }
     this.reset_counters();
 };
+
+game_constructor.prototype.who_wins = function(){
+    console.log('********* method who_wins called**************');
+        if(this.player1 === false){
+            console.log('spongebob won!');
+            $('.slot').hide();
+            $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
+            this.player1_score++;
+            this.display_stats();
+        }else{
+            $('.slot').hide();
+            console.log('patrick won!');
+            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
+            this.player2_score++;
+            this.display_stats();
+        }
+};
+
 game_constructor.prototype.increase_counters = function(direction_tracker) {
+    console.log('********* method increase_counters called**************');
     switch (direction_tracker) {
         case 1:
         case 9:
@@ -252,13 +249,24 @@ game_constructor.prototype.increase_counters = function(direction_tracker) {
             this.vert_counter++;
             break;
     }
-}
+};
 
 
 game_constructor.prototype.reset_counters = function () {
-    this.diag1_counter = 0,
-        this.diag2_counter = 0,
-        this.horz_counter = 0,
-        this.vert_counter = 0,
-        this.direction_tracker = 0;
+    console.log('********* method reset_counters called**************');
+    this.diag1_counter = 0;
+    this.diag2_counter = 0;
+    this.horz_counter = 0;
+    this.vert_counter = 0;
+    this.direction_tracker = 0;
 };
+
+function boardUpdated(data){
+    console.log('this is the callback function', data);
+}
+
+
+
+
+
+
