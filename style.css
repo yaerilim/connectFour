@@ -6,6 +6,32 @@ body {
     height: 90vh;
     width: 100vw;
 }
+.local{
+    margin: 3%;
+    width: 40%;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px #999;
+}
+.local:active {
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+}
+.multi{
+    margin: 3%;
+    width: 40%;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px #999;
+}
+.multi:active {
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+}
 .logo_container {
     margin: 2%;
     float: left;
@@ -48,21 +74,36 @@ body {
     background-size: 100%;
 }
 .score_container {
-    margin: 12% 2% 0 2%;
+    margin: 7% 2% 0 2%;
     float: left;
     height: 25%;
     width: 18%;
     position: relative;
 }
+.sound_on, .sound_off{
+    position: absolute;
+    width: 18%;
+    top: 15%;
+    left: 15%;
+}
 .bamboo{
     width: 100%;
     position: relative;
+    top: 40%;
 }
 .new_game{
-    width: 70%;
+    width: 60%;
     position: absolute;
-    left: 15%;
-    top: 140%;
+    left: 20%;
+    top: 225%;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 15px;
+    box-shadow: 0 5px #999;
+}
+.new_game:active {
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
 }
 .selected_slot_p1 {
     background-image: url("img/spongebob_chip.png");
@@ -75,30 +116,36 @@ body {
     background-size: 100%;
 }
 .player1_score {
-    height: 10vh;
-    width: 10vw;
+    width: 28%;
     font-size: 10vh;
     position: absolute;
-    top: 6vh;
-    left: 10vw;
+    top: 115%;
+    left: 58%;
 }
 .player2_score {
-    height: 10vh;
-    width: 10vw;
+    width: 28%;
     font-size: 10vh;
     position: absolute;
-    left: 10vw;
-    top: 17vh;
+    top: 165%;
+    left: 58%;
+}
+.youare_s, .youare_p{
+    position: absolute;
+    width: 70%;
+    top: 65%;
+    left: 15%;
 }
 .spongebob_gray, .spongebob{
     position: absolute;
-    left: 3vw;
-    top: 7vh;
+    width: 28%;
+    top: 115%;
+    left: 18%;
 }
 .patrick_gray, .patrick {
     position: absolute;
-    top: 18vh;
-    left: 3vw;
+    width: 28%;
+    top: 165%;
+    left: 18%;
 }
 .you_won{
     margin: 20% 0;
