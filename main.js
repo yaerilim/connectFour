@@ -1,3 +1,43 @@
+
+function GenericFBModel(gameName, changeCallbackFunction){
+    this.boardName = gameName;
+    this.db;
+    this.callback = changeCallbackFunction;
+    this.lastSend = null;
+    this.initialize = function(){
+        this.load();
+    };
+    this.load = function(){
+        $.getScript('https://www.gstatic.com/firebasejs/3.6.8/firebase.js',this.start.bind(this));
+    };
+    this.start = function(){
+        var config = {
+            apiKey: "AIzaSyBf6h2GLec6WsULcGgaHy2-uMPEe9L3DGQ",
+            authDomain: "c117connect4.firebaseapp.com",
+            databaseURL: "https://c117connect4.firebaseio.com",
+            storageBucket: "c117connect4.appspot.com",
+            messagingSenderId: "1046895016915"
+        };
+        this.db=firebase;
+        this.db.initializeApp(config);
+        this.registerListener();
+    };
+    this.saveState = function(newState){
+        this.lastSend = JSON.stringify(newState);
+        this.db.database().ref(this.boardName).set(newState);
+    };
+    this.registerListener = function(){
+        this.db.database().ref(this.boardName).on('value',this.handleDataUpdate.bind(this));
+    };
+    this.handleDataUpdate = function(data){
+        var currentData = JSON.stringify(data.val());
+        this.callback.call(null,data.val());
+    };
+    this.initialize();
+
+}
+
+
 var connect4;
 var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
 setTimeout(function() {
@@ -23,8 +63,13 @@ function boardUpdated(data){
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
-
 });
+
+
+function boardUpdated(data){
+    console.log(data);
+};
+
 function audio_controls() {
     $('.material-icons').toggleClass('muted');
     $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
@@ -34,11 +79,12 @@ function game_constructor() {
     this.player1 = true; // variable used to detect player turn
     this.counter = 0; // variable used to count matches in a row
     this.matches_found = {};
-    this.player1_score = 0;
+    this.player1_score = 3;
     this.player2_score = 0;
-    $('.spongebob').hide();
+    $('.patrick').hide();
     this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0;
     this.direction_tracker = 0;
+
     this.div_array = [
         [,,,,,],
         [,,,,,],
@@ -126,7 +172,6 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         });
         $('.spongebob').show();
         $('.patrick').hide();
-
         console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
@@ -152,6 +197,10 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
 game_constructor.prototype.reset_board = function(){
     $('.slot_container').empty();
     this.init();
+    this.player1 = true;
+    $('.spongebob').show();
+    $('.patrick').hide();
+    this.display_stats();
     this.game_array = [
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
@@ -162,6 +211,12 @@ game_constructor.prototype.reset_board = function(){
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
 };
+
+game_constructor.prototype.display_stats = function(){
+    $('.player1_score').text(this.player1_score);
+    $('.player2_score').text(this.player2_score);
+};
+
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
@@ -235,7 +290,8 @@ game_constructor.prototype.increase_counters = function(direction_tracker) {
     }
 };
 
-game_constructor.prototype.reset_counters = function() {
+
+game_constructor.prototype.reset_counters = function () {
     this.diag1_counter = 0,
         this.diag2_counter = 0,
         this.horz_counter = 0,
