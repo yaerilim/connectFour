@@ -1,14 +1,15 @@
 var connect4 = new game_constructor();
-var connect4Model = new GenericFBModel('spongeBob-connect4', boardUpdated);
 
-var emptyObject = {
-    column: 'empty',
-    multiplayer: false,
-    player1joined: false,
-    player2joined: false,
-    game_over: true,
-    db_player_turn: -1
-};
+// var connect4Model = new GenericFBModel('spongeBob-connect4', boardUpdated);
+
+// var emptyObject = {
+//     column: 'empty',
+//     multiplayer: false,
+//     player1joined: false,
+//     player2joined: false,
+//     game_over: true,
+//     db_player_turn: -1
+// };
 
 // setTimeout(function() {
 //     connect4Model.saveState(emptyObject);
@@ -59,20 +60,20 @@ function setupDB() {
 
 
 
-function boardUpdated(data){
-
-    console.log('data from the server: ', data);
-    connect4.data_received_from_server = data;
-
-    connect4.remote_column_clicked = connect4.data_received_from_server.column + ' 6';
-    var input_into_jquery_selector = 'div>div:contains(' + connect4.remote_column_clicked + ')';
-
-
-    if (connect4.data_received_from_server.db_player_turn === connect4.player_turn) {
-        $(input_into_jquery_selector).click();
-        return;
-    }
-}
+// function boardUpdated(data){
+//
+//     console.log('data from the server: ', data);
+//     connect4.data_received_from_server = data;
+//
+//     connect4.remote_column_clicked = connect4.data_received_from_server.column + ' 6';
+//     var input_into_jquery_selector = 'div>div:contains(' + connect4.remote_column_clicked + ')';
+//
+//
+//     // if (connect4.data_received_from_server.db_player_turn === connect4.player_turn) {
+//     //     $(input_into_jquery_selector).click();
+//     //     return;
+//     // }
+// }
 
 $(document).ready(function() {
     $('.sound_off').click(sound_off);
@@ -107,6 +108,7 @@ function sound_on(){
     $('.music')[0].play();
 }
 function game_constructor() {
+    this.winner_found = false;
     this.player_turn = null;
     this.you_are = '';
     this.data_received_from_server = {};
@@ -167,7 +169,7 @@ function select_game_mode() {
             connect4.update_firebase('empty', true, connect4.data_received_from_server.player1joined,  connect4.data_received_from_server.player2joined,  connect4.data_received_from_server.game_over, connect4.data_received_from_server.db_player_turn);
             connect4.waiting_for_player_2();
         });
-    }, 2000);
+    }, 500);
 
 }
 game_constructor.prototype.waiting_for_player_2 = function() {
@@ -261,10 +263,12 @@ game_constructor.prototype.update_firebase = function(column, multiplayer, playe
 
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     var current_column = this.game_array[clickedSlot.column];
-    this.data_received_from_server.db_player_turn = this.data_received_from_server.db_player_turn * -1;
-    if (connect4.player_turn !== connect4.data_received_from_server.db_player_turn) {
-        this.update_firebase(clickedSlot.column, this.data_received_from_server.multiplayer, this.data_received_from_server.player1joined, this.data_received_from_server.player2joined, this.data_received_from_server.game_over, this.data_received_from_server.db_player_turn);
-    }
+
+    // this.data_received_from_server.db_player_turn = this.data_received_from_server.db_player_turn * -1;
+    // if (connect4.player_turn !== connect4.data_received_from_server.db_player_turn) {
+    //     this.update_firebase(clickedSlot.column, this.data_received_from_server.multiplayer, this.data_received_from_server.player1joined, this.data_received_from_server.player2joined, this.data_received_from_server.game_over, this.data_received_from_server.db_player_turn);
+    // }
+
     if (this.player1 === true) {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/patrick_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
@@ -359,7 +363,8 @@ game_constructor.prototype.reset_board = function(){
     ];
     $('.youare_p').hide();
     $('.youare_s').show();
-    this.update_firebase('empty', false, false, false, true, -1);
+    // this.update_firebase('empty', false, false, false, true, -1);
+    this.winner_found = false;
 };
 
 game_constructor.prototype.hard_reset = function() {
@@ -382,6 +387,7 @@ game_constructor.prototype.hard_reset = function() {
     this.display_stats();
     $('.youare_p').hide();
     $('.youare_s').show();
+    this.winner_found = false;
 
 };
 
@@ -395,7 +401,7 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
     //console.log('********* method search_slots called**************');
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
-
+            if (this.winner_found === true) {return};
             // checks happen from the bottom of a column to the top, then moves and checks the next column in the same fashion.
             // each direction is given a value of 1-9 and adds to the appropriate counter based on the switch statement below.
             this.direction_tracker++;
@@ -438,26 +444,30 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
 
 game_constructor.prototype.who_wins = function(){
     //console.log('********* method who_wins called**************');
-        if(this.player1 === false){
-            console.log('spongebob won!');
-            spongebob_win();
-            $('.youare_p').hide();
-            $('.youare_s').show();
-            $('.slot').hide();
-            $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
-            this.player1_score++;
-            this.display_stats();
-        }else{
-            $('.youare_p').show();
-            $('.youare_s').hide();
-            $('.slot').hide();
-            console.log('patrick won!');
-            patrick_win();
-            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
-            this.player2_score++;
-            this.display_stats();
-        }
-        this.update_firebase('empty', false, false, false, true, -1);
+    if(this.player1 === false){
+        console.log('spongebob won!');
+        spongebob_win();
+        $('.youare_p').hide();
+        $('.youare_s').show();
+        $('.slot').hide();
+        $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
+        this.player1_score++;
+        this.display_stats();
+        this.winner_found = true;
+    }else{
+        $('.youare_p').show();
+        $('.youare_s').hide();
+        $('.slot').hide();
+        console.log('patrick won!');
+        patrick_win();
+        $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
+        this.player2_score++;
+        this.display_stats();
+        this.winner_found = true;
+    }
+    // this.update_firebase('empty', false, false, false, true, -1);
+
+
 };
 
 game_constructor.prototype.increase_counters = function(direction_tracker) {
