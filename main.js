@@ -1,4 +1,10 @@
 var connect4;
+var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
+
+function boardUpdated(data){
+    console.log('**data from the server**',data);
+}
+
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
@@ -35,6 +41,17 @@ function game_constructor() {
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
 }
+
+
+game_constructor.prototype.call_firebase = function() {
+    this.firebase_db = {
+        name: this.game_array
+    };
+    connect4Model.saveState(this.firebase_db);
+};
+
+
+
 game_constructor.prototype.init = function() {
     this.create_divs(this);
     $('.new_game').click(function() {
@@ -93,6 +110,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
+        this.call_firebase();
     } else {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/spongebob_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
@@ -107,6 +125,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var down_to_bottom = current_column.indexOf("a");
         current_column[down_to_bottom] = 'B';
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p2');
+        this.call_firebase();
     }
     this.search_surrounding_slots(clickedSlot.column, down_to_bottom);
 };
@@ -194,7 +213,6 @@ game_constructor.prototype.increase_counters = function(direction_tracker) {
             this.vert_counter++;
             break;
     }
-
 };
 
 game_constructor.prototype.reset_counters = function() {
