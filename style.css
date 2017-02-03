@@ -42,6 +42,10 @@ body {
 .top {
     background: none;
 }
+
+.krabby_patty {
+
+}
 .top:hover {
     background-image: url("img/spongebob_ready.png");
     background-repeat: no-repeat;
@@ -83,6 +87,18 @@ body {
 }
 .selected_slot_p2 {
     background-image: url("img/patrick_chip.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.krabby_patty_clicked_spongebob{
+    background-image: url("img/patty.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+.krabby_patty_clicked_patrick{
+    background-image: url("img/patty.png");
+    filter: hue-rotate(290deg);
     background-repeat: no-repeat;
     background-size: 100%;
 }
