@@ -1,6 +1,27 @@
 
 var connect4;
 
+var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
+setTimeout(function() {
+    connect4Model.saveState(emptyObject)
+}, 2000);
+
+var emptyObject = {
+    passed_column: 'empty'
+};
+
+function boardUpdated(data){
+    console.log('**data from the server**',data);
+    if (data.passed_column === 'empty') {
+        console.log('db is clean');
+        return;
+    }
+    connect4.remote_column_clicked = data.passed_column + ' 6';
+    var input_into_jquery_selector = 'div>div:contains(' + connect4.remote_column_clicked + ')';
+    $(input_into_jquery_selector).click();
+
+}
+
 $(document).ready(function() {
     connect4 = new game_constructor();
     connect4.init();
@@ -11,6 +32,7 @@ function audio_controls() {
     $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
 }
 function game_constructor() {
+    this.remote_column_clicked = null;
     this.player1 = true; // variable used to detect player turn
     this.counter = 0; // variable used to count matches in a row
     this.matches_found = {};
@@ -39,6 +61,13 @@ function game_constructor() {
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
 }
+
+game_constructor.prototype.call_firebase = function(column) {
+    this.firebase_db = {
+        passed_column: column
+    };
+    connect4Model.saveState(this.firebase_db);
+};
 
 
 game_constructor.prototype.init = function() {
@@ -89,21 +118,24 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
     }
 };
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
+    var current_column = this.game_array[clickedSlot.column];
+
+    var passed_to_firebase = clickedSlot.column;
+    this.call_firebase(passed_to_firebase);
+
     if (this.player1 === true) {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/patrick_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
         },function(){
             $(this).css("background", "none");
         });
-        $('.patrick').show();
-        $('.spongebob').hide();
-        var current_column = this.game_array[clickedSlot.column];
+        $('.spongebob').show();
+        $('.patrick').hide();
         console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
-
 
     } else {
         $('.top').hover(function(){
@@ -111,15 +143,15 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         },function(){
             $(this).css("background", "none");
         });
-        $('.spongebob').show();
-        $('.patrick').hide();
-        var current_column = this.game_array[clickedSlot.column];
+        $('.patrick').show();
+        $('.spongebob').hide();
         console.log('Player 2 has clicked', clickedSlot);
         this.player1 = true;
         var down_to_bottom = current_column.indexOf("a");
         current_column[down_to_bottom] = 'B';
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p2');
     }
+
     this.search_surrounding_slots(clickedSlot.column, down_to_bottom);
 };
 game_constructor.prototype.reset_board = function(){
