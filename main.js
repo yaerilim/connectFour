@@ -79,7 +79,6 @@ $(document).ready(function() {
     $('.sound_off').click(sound_off);
     $('.sound_on').click(sound_on);
     select_game_mode();
-    setupDB();
 });
 
 function drop(){ //sound effect for drop noise on slots
