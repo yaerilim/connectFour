@@ -1,31 +1,82 @@
-
-var connect4;
-
-var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
-
-setTimeout(function() {
-    connect4Model.saveState(emptyObject)
-}, 2000);
+var connect4 = new game_constructor();
+var connect4Model = new GenericFBModel('spongeBob-connect4-derrick', boardUpdated);
 
 var emptyObject = {
-    passed_column: 'empty'
+    column: 'empty',
+    multiplayer: false,
+    player1joined: false,
+    player2joined: false,
+    game_over: true,
+    db_player_turn: -1
 };
 
+// setTimeout(function() {
+//     connect4Model.saveState(emptyObject);
+//     console.log('db reset')
+// }, 5000);
+
+
+// update_firebase = function(column, multiplayer, player1joined, player2joined, game_over, db_player_turn)
+
+function setupDB() {
+    setTimeout(function() {
+        if (connect4.data_received_from_server.player1joined === true && connect4.data_received_from_server.player2joined === true) {
+            console.log('something is wrong...');
+        }
+        else if (connect4.data_received_from_server.player1joined === false) {
+            connect4.update_firebase('empty', false, true, false, true, -1); //setting firebase back to empty DB, joining as player 1
+            connect4.data_received_from_server = {
+                column: 'empty',
+                multiplayer: false,
+                player1joined: true,
+                player2joined: false,
+                game_over: true,
+                db_player_turn: -1
+            };
+            console.log('game starting, you are player 1');
+            connect4.player_turn = -1;
+            connect4.you_are = 'player 1';
+        }
+        else if (connect4.data_received_from_server.player1joined === true) {
+            connect4.update_firebase('empty', true, true, true, true, -1); //player 1 has already joined, joining as player 2
+            console.log('game starting, you are player 2');
+            connect4.you_are = 'player 2';
+            connect4.player_turn = 1;
+            connect4.data_received_from_server = {
+                column: 'empty',
+                multiplayer: true,
+                player1joined: true,
+                player2joined: true,
+                game_over: true,
+                db_player_turn: -1
+            };
+        }
+        else {
+            console.log("player 1 may not be in multiplayer");
+        }
+    }, 5000)
+}
+
+
+
 function boardUpdated(data){
-    console.log('**data from the server**',data);
-    if (data.passed_column === 'empty') {
-        console.log('db is clean');
+
+    console.log('data from the server: ', data);
+    connect4.data_received_from_server = data;
+
+    connect4.remote_column_clicked = connect4.data_received_from_server.column + ' 6';
+    var input_into_jquery_selector = 'div>div:contains(' + connect4.remote_column_clicked + ')';
+
+
+    if (connect4.data_received_from_server.db_player_turn === connect4.player_turn) {
+        $(input_into_jquery_selector).click();
         return;
     }
-    connect4.remote_column_clicked = data.passed_column + ' 6';
-    var input_into_jquery_selector = 'div>div:contains(' + connect4.remote_column_clicked + ')';
-    $(input_into_jquery_selector).click();
-
 }
 
 $(document).ready(function() {
-    connect4 = new game_constructor();
-    connect4.init();
+    select_game_mode();
+    setupDB();
 });
 
 function sound_off() {
@@ -40,10 +91,13 @@ function sound_on(){
     $('.music')[0].play();
 }
 function game_constructor() {
+    this.player_turn = null;
+    this.you_are = '';
+    this.data_received_from_server = {};
+    // this.multiplayer = false;
+    // this.player2joined = false;
     this.remote_column_clicked = null;
     this.player1 = true; // variable used to detect player turn
-    this.counter = 0; // variable used to count matches in a row
-    this.matches_found = {};
     this.player1_score = 0;
     this.player2_score = 0;
     $('.patrick').hide();
@@ -70,20 +124,58 @@ function game_constructor() {
     ];
 }
 
-game_constructor.prototype.call_firebase = function(column) {
-    this.firebase_db = {
-        passed_column: column
-    };
-    connect4Model.saveState(this.firebase_db);
-};
+function select_game_mode() {
+    var game_modes_div = $('<div>', {
+        class: 'game_modes'
+    });
+    var img_local = $('<img>', {
+        src: 'img/local.png'
+    });
+    var img_multi = $('<img>', {
+        src: 'img/multi.png'
+    });
+    game_modes_div.append(img_local, img_multi);
+    $('.slot_container').append(game_modes_div);
+
+    setTimeout(function() {
+        $('.game_modes img:nth-child(1)').click(function() {
+            $('.slot_container').empty();
+            console.log('local selected');
+            connect4.init();
+        });
+
+        $('.game_modes img:nth-child(2)').click(function() {
+            $('.slot_container').empty();
+            console.log('multi selected');
+            connect4.multiplayer = true;
+            connect4.update_firebase('empty', true, connect4.data_received_from_server.player1joined,  connect4.data_received_from_server.player2joined,  connect4.data_received_from_server.game_over, connect4.data_received_from_server.db_player_turn);
+            connect4.waiting_for_player_2();
+        });
+    }, 2000);
+
+}
+game_constructor.prototype.waiting_for_player_2 = function() {
+    // $('.slot_container').empty();
+    // $('.slot_container').css('background-color', 'red'); // need to add a graphic on waiting for player
+    // if(connect4.data_received_from_server.player2joined === false) { //need to look into passing 'this' after setTimeout calls function again
+    //     console.log('waiting for player 2');
+    //     setTimeout(connect4.waiting_for_player_2, 1000);
+    //     return;
+    // }
+    // $('.slot_container').css('background-color', '');
+    connect4.init();
+
+}
 
 
 game_constructor.prototype.init = function() {
+
     this.create_divs(this);
+
     $('.new_game').click(function() {
         console.log('new game button clicked');
         connect4.reset_board();
-    }); aq
+    });
     $('.reset_all').click(function(){
         console.log('reset stats and board');
         connect4.hard_reset();
@@ -91,7 +183,7 @@ game_constructor.prototype.init = function() {
     $('.reset_score').click(function(){
         console.log('reseting board and scores');
         connect4.hard_reset();
-    })
+    });
     $('.sound_off').click(sound_off);
     $('.sound_on').click(sound_on);
 };
@@ -130,12 +222,26 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
         }
     }
 };
+
+game_constructor.prototype.update_firebase = function(column, multiplayer, player1joined, player2joined, game_over, db_player_turn) {
+    this.firebase_db = {
+        column: column,
+        multiplayer: multiplayer,
+        player1joined: player1joined,
+        player2joined: player2joined,
+        game_over: game_over,
+        db_player_turn: db_player_turn
+    };
+    //console.log('sending data to server: ', this.firebase_db);
+    connect4Model.saveState(this.firebase_db);
+};
+
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     var current_column = this.game_array[clickedSlot.column];
-
-    var passed_to_firebase = clickedSlot.column;
-    this.call_firebase(passed_to_firebase);
-
+    this.data_received_from_server.db_player_turn = this.data_received_from_server.db_player_turn * -1;
+    if (connect4.player_turn !== connect4.data_received_from_server.db_player_turn) {
+        this.update_firebase(clickedSlot.column, this.data_received_from_server.multiplayer, this.data_received_from_server.player1joined, this.data_received_from_server.player2joined, this.data_received_from_server.game_over, this.data_received_from_server.db_player_turn);
+    }
     if (this.player1 === true) {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/patrick_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
@@ -147,6 +253,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         $('.youare_s').hide();
         $('.youare_p').show();
         console.log('Player 1 has clicked', clickedSlot);
+        //console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
@@ -163,6 +270,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         $('.youare_p').hide();
         $('.youare_s').show();
         console.log('Player 2 has clicked', clickedSlot);
+        //console.log('Player 2 has clicked', clickedSlot);
         this.player1 = true;
         var down_to_bottom = current_column.indexOf("a");
         current_column[down_to_bottom] = 'B';
@@ -188,6 +296,7 @@ game_constructor.prototype.reset_board = function(){
     ];
     $('.youare_p').hide();
     $('.youare_s').show();
+    this.update_firebase('empty', false, false, false, true, -1);
 };
 
 game_constructor.prototype.hard_reset = function() {
@@ -214,13 +323,13 @@ game_constructor.prototype.hard_reset = function() {
 };
 
 game_constructor.prototype.display_stats = function(){
-    console.log('********* method display_stats called**************');
+    //console.log('********* method display_stats called**************');
     $('.player1_score').text(this.player1_score);
     $('.player2_score').text(this.player2_score);
 };
 
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
-    console.log('********* method search_slots called**************');
+    //console.log('********* method search_slots called**************');
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
 
@@ -232,7 +341,7 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
             if (!(j == 0 && i == 0) && array + i > -1 && array + i < 7 && index + j > -1 && index + j < 6) {
                 var move_array_position = i;
                 var move_index_position = j;
-                console.log('checking at: ' + (array + i) + ', ' + (index + j));
+                //console.log('checking at: ' + (array + i) + ', ' + (index + j));
 
                 // this while statement allows the check to continue along the same path
                 // for example, if its checking the slot to the top right and finds a match,
@@ -240,7 +349,7 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                 while (this.game_array[array + move_array_position][index + move_index_position] === this.game_array[array][index]) {
                     this.increase_counters(this.direction_tracker);
 
-                    console.log('match found at: ' + (array + move_array_position) + ', ' + (index + move_index_position));
+                    //console.log('match found at: ' + (array + move_array_position) + ', ' + (index + move_index_position));
 
                     // checks to see if any of the counters have reached a winning value
                     if (this.diag1_counter === 3 || this.diag2_counter === 3 || this.horz_counter === 3 || this.vert_counter === 3) {
@@ -265,7 +374,7 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
 };
 
 game_constructor.prototype.who_wins = function(){
-    console.log('********* method who_wins called**************');
+    //console.log('********* method who_wins called**************');
         if(this.player1 === false){
             console.log('spongebob won!');
             $('.youare_p').hide();
@@ -283,10 +392,11 @@ game_constructor.prototype.who_wins = function(){
             this.player2_score++;
             this.display_stats();
         }
+        this.update_firebase('empty', false, false, false, true, -1);
 };
 
 game_constructor.prototype.increase_counters = function(direction_tracker) {
-    console.log('********* method increase_counters called**************');
+    //console.log('********* method increase_counters called**************');
     switch (direction_tracker) {
         case 1:
         case 9:
@@ -309,7 +419,7 @@ game_constructor.prototype.increase_counters = function(direction_tracker) {
 
 
 game_constructor.prototype.reset_counters = function () {
-    console.log('********* method reset_counters called**************');
+    //console.log('********* method reset_counters called**************');
     this.diag1_counter = 0;
     this.diag2_counter = 0;
     this.horz_counter = 0;
