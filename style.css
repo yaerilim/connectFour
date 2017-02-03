@@ -88,8 +88,8 @@ body {
 }
 .bamboo{
     width: 100%;
-    position: relative;
-    top: 40%;
+    position: absolute;
+    top: 38%;
 }
 .new_game{
     width: 60%;

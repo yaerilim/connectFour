@@ -1,7 +1,7 @@
 
 var connect4;
 
-var connect4Model = new GenericFBModel('spongeBobjohn-connect4',boardUpdated);
+var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
 
 setTimeout(function() {
     connect4Model.saveState(emptyObject)
@@ -83,7 +83,7 @@ game_constructor.prototype.init = function() {
     $('.new_game').click(function() {
         console.log('new game button clicked');
         connect4.reset_board();
-    });
+    }); aq
     $('.reset_all').click(function(){
         console.log('reset stats and board');
         connect4.hard_reset();
