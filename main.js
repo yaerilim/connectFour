@@ -1,7 +1,7 @@
 
 var connect4;
 
-var connect4Model = new GenericFBModel('1111spongeBob-connect4',boardUpdated);
+var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
 setTimeout(function() {
     connect4Model.saveState(emptyObject)
 }, 2000);
