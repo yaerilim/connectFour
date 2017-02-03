@@ -95,13 +95,27 @@ body {
     width: 60%;
     position: absolute;
     left: 20%;
-    top: 225%;
+    top: 218%;
     display: inline-block;
     cursor: pointer;
     border-radius: 15px;
     box-shadow: 0 5px #999;
 }
 .new_game:active {
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+}
+.reset_score{
+    width: 60%;
+    position: absolute;
+    left: 20%;
+    top: 250%;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 15px;
+    box-shadow: 0 5px #999;
+}
+.reset_score:active {
     box-shadow: 0 3px #666;
     transform: translateY(4px);
 }
