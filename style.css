@@ -6,32 +6,6 @@ body {
     height: 90vh;
     width: 100vw;
 }
-.local{
-    margin: 3%;
-    width: 40%;
-    display: inline-block;
-    cursor: pointer;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 5px #999;
-}
-.local:active {
-    box-shadow: 0 3px #666;
-    transform: translateY(4px);
-}
-.multi{
-    margin: 3%;
-    width: 40%;
-    display: inline-block;
-    cursor: pointer;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 5px #999;
-}
-.multi:active {
-    box-shadow: 0 3px #666;
-    transform: translateY(4px);
-}
 .logo_container {
     margin: 2%;
     float: left;
@@ -73,35 +47,32 @@ body {
     background-repeat: no-repeat;
     background-size: 100%;
 }
-.score_container {
-    margin: 7% 2% 0 2%;
-    float: left;
-    height: 25%;
-    width: 18%;
-    position: relative;
-}
-.sound_on, .sound_off{
-    position: absolute;
-    width: 18%;
-    top: 15%;
-    left: 15%;
-}
-.bamboo{
-    width: 100%;
-    position: relative;
-    top: 40%;
-}
+
 .new_game{
+    margin-top: 110%;
+    margin-left: 20%;
     width: 60%;
     position: absolute;
-    left: 20%;
-    top: 225%;
     display: inline-block;
     cursor: pointer;
     border-radius: 15px;
     box-shadow: 0 5px #999;
 }
 .new_game:active {
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+}
+.reset_score{
+    width: 60%;
+    margin-top: 130%;
+    margin-left: 20%;
+    position: absolute;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 15px;
+    box-shadow: 0 5px #999;
+}
+.reset_score:active {
     box-shadow: 0 3px #666;
     transform: translateY(4px);
 }
@@ -116,36 +87,41 @@ body {
     background-size: 100%;
 }
 .player1_score {
+    margin-top: 46%;
+    margin-left: 58%;
     width: 28%;
-    font-size: 10vh;
+    font-size: 5vw;
     position: absolute;
-    top: 115%;
-    left: 58%;
+
 }
 .player2_score {
+    margin-top: 76%;
+    margin-left: 58%;
     width: 28%;
-    font-size: 10vh;
+    font-size: 5vw;
     position: absolute;
-    top: 165%;
-    left: 58%;
+
 }
 .youare_s, .youare_p{
+    margin-top: 18%;
+    margin-left: 15%;
     position: absolute;
     width: 70%;
-    top: 65%;
-    left: 15%;
+
 }
 .spongebob_gray, .spongebob{
+    margin-top: 48%;
+    margin-left: 17%;
     position: absolute;
     width: 28%;
-    top: 115%;
-    left: 18%;
+
 }
 .patrick_gray, .patrick {
+    margin-top: 78%;
+    margin-left: 17%;
     position: absolute;
     width: 28%;
-    top: 165%;
-    left: 18%;
+
 }
 .you_won{
     margin: 20% 0;
@@ -165,13 +141,35 @@ body {
     border: dotted 5px white;
     border-radius: 12px;
 }
-.game_modes img{
-    margin: 10px;
-    box-sizing: border-box;
-    width: 70%;
-
-
+.game_modes{
+    width: 100%;
+    margin: 20% 5%;
 }
-.game_modes img:hover {
-    border: 5px solid red;
+.game_modes img{
+    margin: 3%;
+    width: 40%;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px #999;
+}
+.game_modes img:active {
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+}
+.sound_on, .sound_off{
+    position: absolute;
+    margin: 0 22%;
+    width: 3%;
+}
+.score_container {
+    background-image: url("img/bamboo.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    margin: 12% 2% 0 2%;
+    float: left;
+    height: 70%;
+    width: 18%;
+    position: relative;
 }
