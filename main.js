@@ -1,4 +1,5 @@
 var connect4;
+
 var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
 setTimeout(function() {
     connect4Model.saveState(emptyObject)
@@ -25,7 +26,6 @@ $(document).ready(function() {
     connect4.init();
 });
 
-
 function audio_controls() {
     $('.material-icons').toggleClass('muted');
     $('.music')[0].paused ? $('.music')[0].play() : $('.music')[0].pause();
@@ -35,7 +35,7 @@ function game_constructor() {
     this.player1 = true; // variable used to detect player turn
     this.counter = 0; // variable used to count matches in a row
     this.matches_found = {};
-    this.player1_score = 3;
+    this.player1_score = 0;
     this.player2_score = 0;
     $('.patrick').hide();
     this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0;
@@ -61,7 +61,6 @@ function game_constructor() {
     ];
 }
 
-
 game_constructor.prototype.call_firebase = function(column) {
     this.firebase_db = {
         passed_column: column
@@ -70,12 +69,15 @@ game_constructor.prototype.call_firebase = function(column) {
 };
 
 
-
 game_constructor.prototype.init = function() {
     this.create_divs(this);
     $('.new_game').click(function() {
         console.log('new game button clicked');
         connect4.reset_board();
+    });
+    $('.reset_all').click(function(){
+        console.log('reset stats and board');
+        connect4.hard_reset();
     });
     $('.material-icons').click(audio_controls);
 };
@@ -133,6 +135,7 @@ game_constructor.prototype.handle_slot_click = function(clickedSlot) {
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
         this.div_array[clickedSlot.column][down_to_bottom].slot_div.toggleClass('selected_slot_p1'); // applies class to div using the div_array (array containing objects)
+
     } else {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/spongebob_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
@@ -156,7 +159,6 @@ game_constructor.prototype.reset_board = function(){
     this.player1 = true;
     $('.spongebob').show();
     $('.patrick').hide();
-    this.display_stats();
     this.game_array = [
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
         ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
@@ -168,12 +170,34 @@ game_constructor.prototype.reset_board = function(){
     ];
 };
 
+game_constructor.prototype.hard_reset = function() {
+    $('.slot_container').empty();
+    this.init();
+    this.player1 = true;
+    $('.spongebob').show();
+    $('.patrick').hide();
+    this.game_array = [
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 0
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 1
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 2
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 3
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 4
+        ['a', 'a', 'a', 'a', 'a', 'a'], // column 5
+        ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
+    ];
+    this.player1_score = 0;
+    this.player2_score = 0;
+    this.display_stats();
+};
+
 game_constructor.prototype.display_stats = function(){
+    console.log('********* method display_stats called**************');
     $('.player1_score').text(this.player1_score);
     $('.player2_score').text(this.player2_score);
 };
 
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
+    console.log('********* method search_slots called**************');
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
 
@@ -198,7 +222,8 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     // checks to see if any of the counters have reached a winning value
                     if (this.diag1_counter === 3 || this.diag2_counter === 3 || this.horz_counter === 3 || this.vert_counter === 3) {
                         console.log('you win!');
-                        who_wins();
+                        $('.slot_container').attr('disabled', 'true');
+                        this.who_wins();
                         break;
                     }
 
@@ -207,17 +232,7 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
                     move_index_position = move_index_position + j;
                     if (array + move_array_position < 0 || array + move_array_position > 6 || index + move_index_position < 0 || index + move_index_position > 5) {
                         break
-                    }
-                    function who_wins() {
-                        if(connect4.player1 === false){
-                            console.log('spongebob won!');
-                            $('.slot').hide();
-                            $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
-                        }else{
-                            $('.slot').hide();
-                            console.log('patrick won!');
-                            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
-                        }
+
                     }
                 }
             }
@@ -225,7 +240,26 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
     }
     this.reset_counters();
 };
+
+game_constructor.prototype.who_wins = function(){
+    console.log('********* method who_wins called**************');
+        if(this.player1 === false){
+            console.log('spongebob won!');
+            $('.slot').hide();
+            $('.slot_container').append("<div class='you_won'><img class='spongebob_won' src='img/spongebob_wins.gif'></div>");
+            this.player1_score++;
+            this.display_stats();
+        }else{
+            $('.slot').hide();
+            console.log('patrick won!');
+            $('.slot_container').append("<div class='you_won'><img class='patrick_won' src='img/patrick_wins.gif'></div>");
+            this.player2_score++;
+            this.display_stats();
+        }
+};
+
 game_constructor.prototype.increase_counters = function(direction_tracker) {
+    console.log('********* method increase_counters called**************');
     switch (direction_tracker) {
         case 1:
         case 9:
@@ -248,9 +282,18 @@ game_constructor.prototype.increase_counters = function(direction_tracker) {
 
 
 game_constructor.prototype.reset_counters = function () {
-    this.diag1_counter = 0,
-        this.diag2_counter = 0,
-        this.horz_counter = 0,
-        this.vert_counter = 0,
-        this.direction_tracker = 0;
+    console.log('********* method reset_counters called**************');
+    this.diag1_counter = 0;
+    this.diag2_counter = 0;
+    this.horz_counter = 0;
+    this.vert_counter = 0;
+    this.direction_tracker = 0;
 };
+
+
+
+
+
+
+
+
