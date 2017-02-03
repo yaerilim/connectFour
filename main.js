@@ -1,4 +1,3 @@
-
 var connect4;
 
 var connect4Model = new GenericFBModel('spongeBob-connect4',boardUpdated);
