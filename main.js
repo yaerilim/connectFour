@@ -1,85 +1,9 @@
 var connect4 = new game_constructor();
 
-// var connect4Model = new GenericFBModel('spongeBob-connect4', boardUpdated);
-
-// var emptyObject = {
-//     column: 'empty',
-//     multiplayer: false,
-//     player1joined: false,
-//     player2joined: false,
-//     game_over: true,
-//     db_player_turn: -1
-// };
-
-// setTimeout(function() {
-//     connect4Model.saveState(emptyObject);
-//     console.log('db reset')
-// }, 5000);
-
-
-// update_firebase = function(column, multiplayer, player1joined, player2joined, game_over, db_player_turn)
-
-function setupDB() {
-    setTimeout(function() {
-        if (connect4.data_received_from_server.player1joined === true && connect4.data_received_from_server.player2joined === true) {
-            console.log('something is wrong...');
-        }
-        else if (connect4.data_received_from_server.player1joined === false) {
-            connect4.update_firebase('empty', false, true, false, true, -1); //setting firebase back to empty DB, joining as player 1
-            connect4.data_received_from_server = {
-                column: 'empty',
-                multiplayer: false,
-                player1joined: true,
-                player2joined: false,
-                game_over: true,
-                db_player_turn: -1
-            };
-            console.log('game starting, you are player 1');
-            connect4.player_turn = -1;
-            connect4.you_are = 'player 1';
-        }
-        else if (connect4.data_received_from_server.player1joined === true) {
-            connect4.update_firebase('empty', true, true, true, true, -1); //player 1 has already joined, joining as player 2
-            console.log('game starting, you are player 2');
-            connect4.you_are = 'player 2';
-            connect4.player_turn = 1;
-            connect4.data_received_from_server = {
-                column: 'empty',
-                multiplayer: true,
-                player1joined: true,
-                player2joined: true,
-                game_over: true,
-                db_player_turn: -1
-            };
-        }
-        else {
-            console.log("player 1 may not be in multiplayer");
-        }
-    }, 5000)
-}
-
-
-
-// function boardUpdated(data){
-//
-//     console.log('data from the server: ', data);
-//     connect4.data_received_from_server = data;
-//
-//     connect4.remote_column_clicked = connect4.data_received_from_server.column + ' 6';
-//     var input_into_jquery_selector = 'div>div:contains(' + connect4.remote_column_clicked + ')';
-//
-//
-//     // if (connect4.data_received_from_server.db_player_turn === connect4.player_turn) {
-//     //     $(input_into_jquery_selector).click();
-//     //     return;
-//     // }
-// }
-
 $(document).ready(function() {
     $('.sound_off').click(sound_off);
     $('.sound_on').click(sound_on);
-    select_game_mode();
-    setupDB();
+    connect4.init();
 });
 
 function drop(){
@@ -109,12 +33,6 @@ function sound_on(){
 }
 function game_constructor() {
     this.winner_found = false;
-    this.player_turn = null;
-    this.you_are = '';
-    this.data_received_from_server = {};
-    // this.multiplayer = false;
-    // this.player2joined = false;
-    this.remote_column_clicked = null;
     this.player1 = true; // variable used to detect player turn
     this.player1_score = 0;
     this.player2_score = 0;
@@ -141,50 +59,6 @@ function game_constructor() {
         ['a', 'a', 'a', 'a', 'a', 'a']  // column 6
     ];
 }
-
-function select_game_mode() {
-    var game_modes_div = $('<div>', {
-        class: 'game_modes'
-    });
-    var img_local = $('<img>', {
-        src: 'img/local.png'
-    });
-    var img_multi = $('<img>', {
-        src: 'img/multi.png'
-    });
-    game_modes_div.append(img_local, img_multi);
-    $('.slot_container').append(game_modes_div);
-
-    setTimeout(function() {
-        $('.game_modes img:nth-child(1)').click(function() {
-            $('.slot_container').empty();
-            console.log('local selected');
-            connect4.init();
-        });
-
-        $('.game_modes img:nth-child(2)').click(function() {
-            $('.slot_container').empty();
-            console.log('multi selected');
-            connect4.multiplayer = true;
-            connect4.update_firebase('empty', true, connect4.data_received_from_server.player1joined,  connect4.data_received_from_server.player2joined,  connect4.data_received_from_server.game_over, connect4.data_received_from_server.db_player_turn);
-            connect4.waiting_for_player_2();
-        });
-    }, 500);
-
-}
-game_constructor.prototype.waiting_for_player_2 = function() {
-    // $('.slot_container').empty();
-    // $('.slot_container').css('background-color', 'red'); // need to add a graphic on waiting for player
-    // if(connect4.data_received_from_server.player2joined === false) { //need to look into passing 'this' after setTimeout calls function again
-    //     console.log('waiting for player 2');
-    //     setTimeout(connect4.waiting_for_player_2, 1000);
-    //     return;
-    // }
-    // $('.slot_container').css('background-color', '');
-    connect4.init();
-
-}
-
 
 game_constructor.prototype.init = function() {
 
@@ -248,18 +122,6 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
     };
 };
 
-game_constructor.prototype.update_firebase = function(column, multiplayer, player1joined, player2joined, game_over, db_player_turn) {
-    this.firebase_db = {
-        column: column,
-        multiplayer: multiplayer,
-        player1joined: player1joined,
-        player2joined: player2joined,
-        game_over: game_over,
-        db_player_turn: db_player_turn
-    };
-    //console.log('sending data to server: ', this.firebase_db);
-    connect4Model.saveState(this.firebase_db);
-};
 
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     var current_column = this.game_array[clickedSlot.column];
