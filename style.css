@@ -11,6 +11,12 @@ body {
     visibility: hidden;
     position: absolute;
 }
+.pointer{
+    position: absolute;
+    width: 39%;
+    z-index: -3;
+    top: 10%;
+}
 /******************************* LOGOS *******************************/
 .logo_container {
     margin: 2%;
@@ -194,5 +200,8 @@ body {
     body {
         overflow: hidden;
         background-size: 150%;
+    }
+    .pointer{
+        top: 7%;
     }
 }
