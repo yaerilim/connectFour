@@ -1,50 +1,41 @@
-var connect4 = new game_constructor();
-
 $(document).ready(function() {
-    $('.sound_off').click(sound_off);
-    $('.sound_on').click(sound_on);
+    var connect4 = new game_constructor();
     connect4.init();
+    $('.landscape').css({
+        "visibility": "hidden",
+        "position": "absolute"
+    });
 });
 
-function drop(){
+function drop_sound(){ //sound effect for drop noise on slots
     var audio = $("#drop")[0];
     audio.play();
 }
 
-function spongebob_win(){
+function spongebob_win(){  //sound effect for spongebob win
     var audio = $('#spongebob_laugh')[0];
     audio.play();
 }
-function patrick_win(){
+function patrick_win(){ //sound effect for patrick win
     var audio = $('#patrick_laugh')[0];
     audio.play();
 }
 
-function sound_off() {
-    $('.sound_off').hide();
-    $('.sound_on').show();
-    $('.music')[0].pause();
-}
-
-function sound_on(){
-    $('.sound_on').hide();
-    $('.sound_off').show();
-    $('.music')[0].play();
-}
 function game_constructor() {
-    this.winner_found = false;
+    this.winner_found = false; // flag for winner
+    this.data_received_from_server = {};
     this.player1 = true; // variable used to detect player turn
     this.player1_score = 0;
     this.player2_score = 0;
-    $('.patrick').hide();
-    this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0;
-    this.direction_tracker = 0;
+    $('.patrick').hide(); //hide patrick token @ beginning of game
+    this.diag1_counter = 0, this.diag2_counter = 0, this.horz_counter = 0, this.vert_counter = 0; //used to count up matches in a row
+    this.direction_tracker = 0; //detects which direction we are counting
 
     this.div_array = [
         [,,,,,],
         [,,,,,],
-        [,,,,,],
-        [,,,,,],
+        [,,,,,],      // used to update game board
+        [,,,,,],      // with correct tokens
         [,,,,,],
         [,,,,,],
         [,,,,,]
@@ -60,23 +51,20 @@ function game_constructor() {
     ];
 }
 
-game_constructor.prototype.init = function() {
 
-    this.create_divs(this);
+game_constructor.prototype.init = function() { //initiate game
+
+    this.create_divs(this); //create game board
 
     $('.new_game').click(function() {
         console.log('new game button clicked');
         connect4.reset_board();
     });
-    $('.reset_all').click(function(){
-        console.log('reset stats and board');
-        connect4.hard_reset();
-    });
     $('.reset_score').click(function(){
-        console.log('reseting board and scores');
+        console.log('reseting board and scores'); // for actual reset score button
         connect4.hard_reset();
     });
-    $(".slot").click(drop);
+    $(".slot").click(drop_sound);
 };
 // create slot objects and corresponding divs
 game_constructor.prototype.create_divs = function() {
@@ -85,7 +73,6 @@ game_constructor.prototype.create_divs = function() {
             var new_slot = new this.slot_constructor(this, column, row );
             new_slot.create_div();
             new_slot.add_class();
-            new_slot.krabby_patty();
             this.div_array[column][row] = new_slot;
         }
     }
@@ -108,16 +95,9 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
     this.handle_click = function() {
         this.parent.handle_slot_click(this);
     };
-    this.add_class = function() {
+    this.add_class = function() { //make top
         if (this.row == 6) {
             $(this.slot_div).addClass('top')
-        }
-    };
-    this.krabby_patty = function(){
-        for(var i = 5; i >= 0; i--) {
-            if (this.row === Math.floor((Math.random() * 5) + 1) && this.column === Math.floor((Math.random() * 5) + 1)) {
-                $(this.slot_div).addClass('krabby_patty');
-            }
         }
     };
 };
@@ -125,24 +105,16 @@ game_constructor.prototype.slot_constructor = function(parent, column, row) {
 
 game_constructor.prototype.handle_slot_click = function(clickedSlot) {
     var current_column = this.game_array[clickedSlot.column];
-
-    // this.data_received_from_server.db_player_turn = this.data_received_from_server.db_player_turn * -1;
-    // if (connect4.player_turn !== connect4.data_received_from_server.db_player_turn) {
-    //     this.update_firebase(clickedSlot.column, this.data_received_from_server.multiplayer, this.data_received_from_server.player1joined, this.data_received_from_server.player2joined, this.data_received_from_server.game_over, this.data_received_from_server.db_player_turn);
-    // }
-
     if (this.player1 === true) {
         $('.top').hover(function(){
             $(this).css({"background-image": "url('img/patrick_ready.png')", "background-repeat": "no-repeat", "background-size": "100%"})
         },function(){
             $(this).css("background", "none");
         });
-        $('.spongebob').hide();
+        $('.spongebob').hide(); //hide spongebob token
         $('.patrick').show();
-        $('.youare_s').hide();
+        $('.youare_s').hide(); //hide spongebob player indicator
         $('.youare_p').show();
-        console.log('Player 1 has clicked', clickedSlot);
-        //console.log('Player 1 has clicked', clickedSlot);
         this.player1 = false;
         var down_to_bottom = current_column.indexOf("a"); // finds the first 'a' in the column
         current_column[down_to_bottom] = 'R'; // puts the player indicator at the 'bottom' of the array where the 'a' was found
@@ -254,13 +226,11 @@ game_constructor.prototype.hard_reset = function() {
 };
 
 game_constructor.prototype.display_stats = function(){
-    //console.log('********* method display_stats called**************');
     $('.player1_score').text(this.player1_score);
     $('.player2_score').text(this.player2_score);
 };
 
 game_constructor.prototype.search_surrounding_slots = function (array, index) {
-    //console.log('********* method search_slots called**************');
     for (var i = -1; i < 2; i++) {
         for (var j = -1; j < 2; j++) {
             if (this.winner_found === true) {return};
@@ -272,15 +242,12 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
             if (!(j == 0 && i == 0) && array + i > -1 && array + i < 7 && index + j > -1 && index + j < 6) {
                 var move_array_position = i;
                 var move_index_position = j;
-                //console.log('checking at: ' + (array + i) + ', ' + (index + j));
 
                 // this while statement allows the check to continue along the same path
                 // for example, if its checking the slot to the top right and finds a match,
                 // it will continue checking in that direction and add onto the appropriate counter.
                 while (this.game_array[array + move_array_position][index + move_index_position] === this.game_array[array][index]) {
                     this.increase_counters(this.direction_tracker);
-
-                    //console.log('match found at: ' + (array + move_array_position) + ', ' + (index + move_index_position));
 
                     // checks to see if any of the counters have reached a winning value
                     if (this.diag1_counter === 3 || this.diag2_counter === 3 || this.horz_counter === 3 || this.vert_counter === 3) {
@@ -305,7 +272,6 @@ game_constructor.prototype.search_surrounding_slots = function (array, index) {
 };
 
 game_constructor.prototype.who_wins = function(){
-    //console.log('********* method who_wins called**************');
     if(this.player1 === false){
         console.log('spongebob won!');
         spongebob_win();
@@ -333,7 +299,6 @@ game_constructor.prototype.who_wins = function(){
 };
 
 game_constructor.prototype.increase_counters = function(direction_tracker) {
-    //console.log('********* method increase_counters called**************');
     switch (direction_tracker) {
         case 1:
         case 9:
@@ -356,7 +321,6 @@ game_constructor.prototype.increase_counters = function(direction_tracker) {
 
 
 game_constructor.prototype.reset_counters = function () {
-    //console.log('********* method reset_counters called**************');
     this.diag1_counter = 0;
     this.diag2_counter = 0;
     this.horz_counter = 0;
