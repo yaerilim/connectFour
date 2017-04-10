@@ -3,51 +3,39 @@
 <head>
     <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
-    <script src="genericFirebaseBackend.js"></script>
     <script src="main.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Connect 4</title>
 </head>
 <body>
+<img class="landscape" src ="img/landscape.gif">
+<!--------------------------------- AUDIO SOUND --------------------------------->
+<audio id="drop" preload="auto"> <source src="music/drop.wav"> </audio>
+<audio id="spongebob_laugh" preload="auto"> <source src="music/spongebob.mp3"> </audio>
+<audio id="patrick_laugh" preload="auto"> <source src="music/patrick.mp3"> </audio>
+<!--------------------------------- LOGO IMAGES ON LEFT --------------------------------->
 <div class="logo_container">
-    <img class='sound_on' src="img/sound_on.png">
-    <img class='sound_off' src="img/sound_off.png">
     <img class='logo' src="img/logo.png"><br>
     <img class='logo2' src="img/logo2.png"><br>
     <img class='sandp' src="img/sandp.png">
 </div>
+<!--------------------------------- GAME AREA IN THE MIDDLE --------------------------------->
 <div class='slot_container'>
-
+    <img class="pointer" src = "img/pointer.png">
 </div>
-
-
-
+<!--------------------------------- SCORE BOARD ON THE RIGHT --------------------------------->
 <div class="score_container">
     <span class="player1_score">0</span>
     <span class="player2_score">0</span>
     <img class="youare_p" src="img/youare_p.png">
     <img class="youare_s" src="img/youare_s.png">
-    <div class="timer"></div>
     <img class='spongebob_gray' src="img/spongebob_gray.png">
     <img class='spongebob' src="img/spongebob.png">
     <img class='patrick_gray' src="img/patrick_gray.png">
     <img class='patrick' src="img/patrick.png">
     <img class="new_game" src="img/new_game.png">
     <img class='reset_score' src="img/reset_score.png">
-    <audio class="music" autoplay loop>
-        <source src="music/theme_song.mp3" >
-    </audio>
-    <audio id="drop" preload="auto">
-        <source src="music/drop.wav">
-    </audio>
-    <audio id="spongebob_laugh" preload="auto">
-        <source src="music/spongebob.mp3">
-    </audio>
-    <audio id="patrick_laugh" preload="auto">
-        <source src="music/patrick.mp3">
-    </audio>
-
 </div>
 </body>
 </html>
